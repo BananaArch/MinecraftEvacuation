@@ -1,6 +1,5 @@
-package com.bananaarch.minecraftevacuation.settings.command;
+package com.bananaarch.minecraftevacuation.settings.utils;
 
-import com.bananaarch.minecraftevacuation.settings.CustomItems;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.Inventory;

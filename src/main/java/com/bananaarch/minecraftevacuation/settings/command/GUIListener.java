@@ -1,7 +1,7 @@
 package com.bananaarch.minecraftevacuation.settings.command;
 
-import com.bananaarch.minecraftevacuation.settings.CustomItems;
-import com.bananaarch.minecraftevacuation.settings.command.CustomGUI;
+import com.bananaarch.minecraftevacuation.settings.utils.CustomItems;
+import com.bananaarch.minecraftevacuation.settings.utils.CustomGUI;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

@@ -2,3 +2,5 @@ name: MinecraftEvacuation
 version: '${project.version}'
 main: com.bananaarch.minecraftevacuation.MinecraftEvacuation
 api-version: 1.19
+commands:
+  setting:

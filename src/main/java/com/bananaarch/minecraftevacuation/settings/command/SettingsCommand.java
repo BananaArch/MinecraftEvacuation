@@ -1,5 +1,6 @@
 package com.bananaarch.minecraftevacuation.settings.command;
 
+import com.bananaarch.minecraftevacuation.settings.utils.CustomGUI;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

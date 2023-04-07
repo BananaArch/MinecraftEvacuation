@@ -1,4 +1,4 @@
-package com.bananaarch.minecraftevacuation.settings;
+package com.bananaarch.minecraftevacuation.settings.utils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
