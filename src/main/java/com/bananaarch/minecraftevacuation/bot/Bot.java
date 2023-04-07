@@ -9,4 +9,5 @@ public class Bot extends ServerPlayer {
     public Bot(MinecraftServer minecraftserver, ServerLevel worldserver, GameProfile gameprofile) {
         super(minecraftserver, worldserver, gameprofile);
     }
+    
 }
