@@ -3,6 +3,7 @@ package com.bananaarch.minecraftevacuation.bot;
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
 import com.bananaarch.minecraftevacuation.bot.utils.BotType;
 import com.bananaarch.minecraftevacuation.bot.utils.BotUtils;
+import com.bananaarch.minecraftevacuation.bot.utils.GameStateUtil;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import net.minecraft.network.Connection;
@@ -30,6 +31,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
+import org.nd4j.linalg.api.ndarray.INDArray;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -135,6 +137,7 @@ public class Bot extends ServerPlayer {
         } else {
             velocity = vector;
         }
+        look(velocity);
     }
 
     public Vector getVelocity() {
@@ -143,6 +146,7 @@ public class Bot extends ServerPlayer {
     
     public void setVelocity(Vector velocity) {
         this.velocity = velocity;
+        look(velocity);
     }
 
     public BoundingBox getBotBoundingBox() {
@@ -151,6 +155,10 @@ public class Bot extends ServerPlayer {
     
     public Location getLocation() {
         return getBukkitEntity().getLocation();
+    }
+
+    public INDArray getGameState() {
+        return GameStateUtil.getGameState(getLocation());
     }
 
     private void look(Vector vector) {

@@ -52,4 +52,5 @@ public class BotAgent {
     public void tickBot(Bot bot) {
         Location location = bot.getLocation();
     }
+
 }
