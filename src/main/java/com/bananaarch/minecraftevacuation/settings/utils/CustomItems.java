@@ -11,45 +11,88 @@ import java.util.Arrays;
 
 public enum CustomItems {
 
+
+    START_REPLAY(
+            "Start Replay",
+            ChatColor.GREEN,
+            "Click here to replay the pre-trained model",
+            false,
+            Material.LIME_CONCRETE_POWDER
+    ),
+    STOP_REPLAY(
+            "Stop Replay",
+            ChatColor.RED,
+            "Click here to stop the replay",
+            false,
+            Material.RED_CONCRETE_POWDER
+    ),
+    START_TRAINING(
+            "Start Training",
+            ChatColor.WHITE,
+            "Click here to start the training",
+            false,
+            Material.FIREWORK_STAR
+    ),
+    STOP_TRAINING(
+            "Stop Training",
+            ChatColor.WHITE,
+            "Click here to stop the training",
+            true,
+            Material.NETHER_STAR
+    ),
+    SHOW_STUDENTS(
+            "Show Students",
+            ChatColor.GREEN,
+            "Click here to show Student NPCs",
+            false,
+            Material.LIME_CANDLE
+    ),
+    HIDE_STUDENTS(
+            "Hide Students",
+            ChatColor.RED,
+            "Click here to hide Student NPCs",
+            false,
+            Material.RED_CANDLE
+    ),
     EXIT_ITEM(
             "Exit",
             ChatColor.DARK_RED,
-            "test",
+            "Click here to exit the GUI",
             false,
             Material.BARRIER
     ),
     FRESHMAN_ITEM(
             "Freshman",
             ChatColor.GREEN,
-            "test",
+            "Click here to get a Freshman block",
             true,
             Material.EMERALD_BLOCK
     ),
     SOPHOMORE_ITEM(
             "Sophomore",
             ChatColor.YELLOW,
-            "test",
+            "Click here to get a Sophomore block",
             true,
             Material.GOLD_BLOCK
     ),
     JUNIOR_ITEM(
             "Juniors",
             ChatColor.BLUE,
-            "test",
+            "Click here to get a Junior block",
             true,
             Material.DIAMOND_BLOCK
     ),
     SENIOR_ITEM(
             "Seniors",
             ChatColor.DARK_PURPLE,
-            "test",
+            "Click here to get a Senior block",
             true,
             Material.NETHERITE_BLOCK
     ),
     TEACHER_ITEM(
             "Teachers",
             ChatColor.WHITE,
-            "test",
+            "Click here to get a Teacher block",
             true,
             Material.BEDROCK
     );

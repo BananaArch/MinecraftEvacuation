@@ -1,5 +1,6 @@
 package com.bananaarch.minecraftevacuation;
 
+import com.bananaarch.minecraftevacuation.bot.BotManager;
 import com.bananaarch.minecraftevacuation.settings.command.GUIListener;
 import com.bananaarch.minecraftevacuation.settings.command.SettingsCommand;
 import net.md_5.bungee.api.ChatColor;
@@ -13,6 +14,17 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class MinecraftEvacuation extends JavaPlugin implements Listener {
+
+    private static MinecraftEvacuation instance;
+    private BotManager manager;
+
+    public static MinecraftEvacuation getInstance() {
+        return instance;
+    }
+    public BotManager getManager() {
+        return manager;
+    }
+
 
     @Override
     public void onEnable() {

@@ -2,11 +2,12 @@ package com.bananaarch.minecraftevacuation.settings.command;
 
 import com.bananaarch.minecraftevacuation.settings.utils.CustomItems;
 import com.bananaarch.minecraftevacuation.settings.utils.CustomGUI;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-
+import org.bukkit.inventory.ItemStack;
 
 
 public class GUIListener implements Listener {
@@ -23,23 +24,73 @@ public class GUIListener implements Listener {
 
             e.setCancelled(true);
 
-            // put it inside so that you can't take from double clicking
             if (e.getClickedInventory().equals(e.getWhoClicked().getInventory()))
                 return;
 
             Player player = (Player) e.getWhoClicked();
-            if (e.getCurrentItem().isSimilar(CustomItems.EXIT_ITEM.getItemStack()))
+
+
+
+            if (e.getCurrentItem().isSimilar(CustomItems.START_REPLAY.getItemStack())) {
+                CustomGUI.SETTINGS_GUI.setItem(3, CustomItems.STOP_REPLAY.getItemStack());
+                player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
+                return;
+            }
+            if (e.getCurrentItem().isSimilar(CustomItems.STOP_REPLAY.getItemStack())) {
+                CustomGUI.SETTINGS_GUI.setItem(3, CustomItems.START_REPLAY.getItemStack());
+                player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
+                return;
+            }
+            if (e.getCurrentItem().isSimilar(CustomItems.START_TRAINING.getItemStack())) {
+                CustomGUI.SETTINGS_GUI.setItem(4, CustomItems.STOP_TRAINING.getItemStack());
+                player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
+                return;
+            }
+            if (e.getCurrentItem().isSimilar(CustomItems.STOP_TRAINING.getItemStack())) {
+                CustomGUI.SETTINGS_GUI.setItem(4, CustomItems.START_TRAINING.getItemStack());
+                player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
+                return;
+            }
+            if (e.getCurrentItem().isSimilar(CustomItems.SHOW_STUDENTS.getItemStack())) {
+                CustomGUI.SETTINGS_GUI.setItem(5, CustomItems.HIDE_STUDENTS.getItemStack());
+                player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
+                return;
+            }
+            if (e.getCurrentItem().isSimilar(CustomItems.HIDE_STUDENTS.getItemStack())) {
+                CustomGUI.SETTINGS_GUI.setItem(5, CustomItems.SHOW_STUDENTS.getItemStack());
+                player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
+                return;
+            }
+            if (e.getCurrentItem().isSimilar(CustomItems.EXIT_ITEM.getItemStack())) {
                 player.closeInventory();
-            if (e.getCurrentItem().isSimilar(CustomItems.FRESHMAN_ITEM.getItemStack()))
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 0);
+                return;
+            }
+            if (e.getCurrentItem().isSimilar(CustomItems.FRESHMAN_ITEM.getItemStack())) {
                 player.getInventory().addItem(CustomItems.FRESHMAN_ITEM.getItemStack());
-            if (e.getCurrentItem().isSimilar(CustomItems.SOPHOMORE_ITEM.getItemStack()))
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 8);
+                return;
+            }
+            if (e.getCurrentItem().isSimilar(CustomItems.SOPHOMORE_ITEM.getItemStack())) {
                 player.getInventory().addItem(CustomItems.SOPHOMORE_ITEM.getItemStack());
-            if (e.getCurrentItem().isSimilar(CustomItems.JUNIOR_ITEM.getItemStack()))
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 8);
+                return;
+            }
+            if (e.getCurrentItem().isSimilar(CustomItems.JUNIOR_ITEM.getItemStack())) {
                 player.getInventory().addItem(CustomItems.JUNIOR_ITEM.getItemStack());
-            if (e.getCurrentItem().isSimilar(CustomItems.SENIOR_ITEM.getItemStack()))
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 8);
+                return;
+            }
+            if (e.getCurrentItem().isSimilar(CustomItems.SENIOR_ITEM.getItemStack())) {
                 player.getInventory().addItem(CustomItems.SENIOR_ITEM.getItemStack());
-            if (e.getCurrentItem().isSimilar(CustomItems.TEACHER_ITEM.getItemStack()))
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 8);
+                return;
+            }
+            if (e.getCurrentItem().isSimilar(CustomItems.TEACHER_ITEM.getItemStack())) {
                 player.getInventory().addItem(CustomItems.TEACHER_ITEM.getItemStack());
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 8);
+                return;
+            }
 
         }
 
