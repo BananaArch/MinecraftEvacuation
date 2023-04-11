@@ -19,7 +19,8 @@ public class BotManager {
         return bots;
     }
 
-    public void addBot(Bot bot) {
+    public void addBot(Bot bot)
+    {
         bots.add(bot);
     }
 

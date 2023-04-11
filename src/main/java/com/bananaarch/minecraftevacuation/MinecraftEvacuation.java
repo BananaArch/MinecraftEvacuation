@@ -1,6 +1,7 @@
 package com.bananaarch.minecraftevacuation;
 
 import com.bananaarch.minecraftevacuation.bot.BotManager;
+import com.bananaarch.minecraftevacuation.settings.blocklistener.BlockPlacedListener;
 import com.bananaarch.minecraftevacuation.settings.command.GUIListener;
 import com.bananaarch.minecraftevacuation.settings.command.SettingsCommand;
 import net.md_5.bungee.api.ChatColor;
@@ -30,6 +31,7 @@ public final class MinecraftEvacuation extends JavaPlugin implements Listener {
     public void onEnable() {
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new GUIListener(), this);
+        Bukkit.getPluginManager().registerEvents(new BlockPlacedListener(), this);
         getCommand("settings").setExecutor(new SettingsCommand());
 
 

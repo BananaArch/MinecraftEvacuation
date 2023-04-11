@@ -60,6 +60,14 @@ public class GameStateUtil {
 
         }
 
+//        position of player
+        gameState.putScalar(
+                startingLengthIndex,
+                startingWidthIndex,
+                startingHeightIndex,
+                -1
+        );
+
         return gameState;
 
     }
@@ -74,8 +82,5 @@ public class GameStateUtil {
         return blockLocation.getBlock();
 
     }
-
-
-
 
 }
