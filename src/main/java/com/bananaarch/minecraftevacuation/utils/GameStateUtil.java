@@ -1,4 +1,4 @@
-package com.bananaarch.minecraftevacuation.bot.utils;
+package com.bananaarch.minecraftevacuation.utils;
 
 import org.bukkit.Location;
 import org.bukkit.Material;

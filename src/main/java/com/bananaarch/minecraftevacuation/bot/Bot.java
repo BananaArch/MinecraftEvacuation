@@ -1,13 +1,12 @@
 package com.bananaarch.minecraftevacuation.bot;
 
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
-import com.bananaarch.minecraftevacuation.bot.utils.BotType;
-import com.bananaarch.minecraftevacuation.bot.utils.BotUtils;
-import com.bananaarch.minecraftevacuation.bot.utils.GameStateUtil;
+import com.bananaarch.minecraftevacuation.utils.BotType;
+import com.bananaarch.minecraftevacuation.utils.BotUtils;
+import com.bananaarch.minecraftevacuation.utils.GameStateUtil;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import net.minecraft.network.Connection;
-import net.minecraft.network.PacketListener;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.PacketFlow;
@@ -26,7 +25,6 @@ import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.NumberConversions;
@@ -59,43 +57,41 @@ public class Bot extends ServerPlayer {
 
     }
 
-    public static Bot createBot(Location initialLocation, String name, BotType botType) {
-        MinecraftServer nmsServer = ((CraftServer) Bukkit.getServer()).getServer();
-        ServerLevel nmsWorld = ((CraftWorld) Objects.requireNonNull(initialLocation.getWorld())).getHandle();
+    public static void createBot(Location initialLocation, String name, BotType botType) {
+//        MinecraftServer nmsServer = ((CraftServer) Bukkit.getServer()).getServer();
+//        ServerLevel nmsWorld = ((CraftWorld) Objects.requireNonNull(initialLocation.getWorld())).getHandle();
+//
+//        UUID uuid = BotUtils.randomSteveUUID();
+//        GameProfile gameProfile = new GameProfile(uuid, name.length() > 16 ? name.substring(0, 16) : name);
+//
+//        boolean isMale = Math.random() < .5;
+//        String[] skin = botType.getSkin(isMale);
+//        gameProfile.getProperties().put("textures", new Property("textures", skin[0], skin[1]));
+//
+//        Bot bot = new Bot(nmsServer, nmsWorld, gameProfile, initialLocation, isMale);
 
-        UUID uuid = BotUtils.randomSteveUUID();
-        GameProfile gameProfile = new GameProfile(uuid, name.length() > 16 ? name.substring(0, 16) : name);
-
-        boolean isMale = Math.random() < .5;
-        String[] skin = botType.getSkin(isMale);
-        if (skin != null) {
-            gameProfile.getProperties().put("textures", new Property("textures", skin[0], skin[1]));
-        }
-
-        Bot bot = new Bot(nmsServer, nmsWorld, gameProfile, initialLocation, isMale);
-
-        bot.connection = new ServerGamePacketListenerImpl(nmsServer, new Connection(PacketFlow.CLIENTBOUND) {
-
-            @Override
-            public void send(Packet<?> packet, @Nullable PacketSendListener callbacks) {
-
-            }
-
-        }, bot);
-
-        bot.setPos(initialLocation.getX(), initialLocation.getY(), initialLocation.getZ());
-        bot.setRot(initialLocation.getYaw(), initialLocation.getPitch());
-
-        Bukkit.getOnlinePlayers().forEach(p -> ((CraftPlayer) p).getHandle().connection.send(
-                new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, bot)
-        ));
-        nmsWorld.addNewPlayer(bot);
-
-        bot.renderAll();
-
-        MinecraftEvacuation.getInstance().getManager().addBot(bot);
-
-        return bot;
+//        bot.connection = new ServerGamePacketListenerImpl(nmsServer, new Connection(PacketFlow.CLIENTBOUND) {
+//
+//            @Override
+//            public void send(Packet<?> packet, @Nullable PacketSendListener callbacks) {
+//
+//            }
+//
+//        }, bot);
+//
+//        bot.setPos(initialLocation.getX(), initialLocation.getY(), initialLocation.getZ());
+//        bot.setRot(initialLocation.getYaw(), initialLocation.getPitch());
+//
+//        Bukkit.getOnlinePlayers().forEach(p -> ((CraftPlayer) p).getHandle().connection.send(
+//                new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, bot)
+//        ));
+//        nmsWorld.addNewPlayer(bot);
+//
+//        bot.renderAll();
+//
+//        MinecraftEvacuation.getInstance().getManager().addBot(bot);
+//
+        System.out.println("TEst");
     }
 
     public void renderAll() {

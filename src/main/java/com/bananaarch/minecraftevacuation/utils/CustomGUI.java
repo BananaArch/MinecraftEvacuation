@@ -1,9 +1,9 @@
-package com.bananaarch.minecraftevacuation.settings.utils;
+package com.bananaarch.minecraftevacuation.utils;
 
+import com.bananaarch.minecraftevacuation.utils.CustomItems;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -22,6 +22,13 @@ public enum CustomGUI {
                 put(14, CustomItems.SENIOR_ITEM.getItemStack());
                 put(15, CustomItems.TEACHER_ITEM.getItemStack());
                 put(22, CustomItems.EXIT_ITEM.getItemStack());
+            }}
+    ),
+    BOT_GUI(
+            9,
+            ChatColor.WHITE + "Edit Bot",
+            new HashMap<Integer, ItemStack>() {{
+
             }}
     );
 

@@ -1,7 +1,7 @@
 package com.bananaarch.minecraftevacuation.bot;
 
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
-import com.bananaarch.minecraftevacuation.bot.utils.BotType;
+import com.bananaarch.minecraftevacuation.utils.BotType;
 import org.bukkit.Location;
 
 import java.util.Set;
@@ -17,12 +17,17 @@ public class BotManager {
         this.botAgent = new BotAgent(this, MinecraftEvacuation.getInstance());
     }
 
+    public void createBot(Location location, String name, BotType type) {
+
+
+    }
+
     public Set<Bot> getBots() {
         return bots;
     }
 
-    public void addBot(Location location, BotType type) {
-        bots.add(Bot.createBot(e.getBlockPlaced().getLocation(), "test", BotType.));
+    public void addBot(Bot bot) {
+        bots.add(bot);
     }
 
     public BotAgent getBotAgent() {

@@ -1,4 +1,4 @@
-package com.bananaarch.minecraftevacuation.bot.utils;
+package com.bananaarch.minecraftevacuation.utils;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

@@ -1,5 +1,6 @@
 package com.bananaarch.minecraftevacuation;
 
+import com.bananaarch.minecraftevacuation.bot.Bot;
 import com.bananaarch.minecraftevacuation.bot.BotManager;
 import com.bananaarch.minecraftevacuation.settings.blocklistener.BlockPlacedListener;
 import com.bananaarch.minecraftevacuation.settings.command.GUIListener;

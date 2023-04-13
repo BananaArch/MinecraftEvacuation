@@ -1,9 +1,9 @@
-package com.bananaarch.minecraftevacuation.bot.utils;
+package com.bananaarch.minecraftevacuation.utils;
 
 import java.util.UUID;
 
 
-// from Terminators Plus
+// code stolen from Terminators Plus
 
 public class BotUtils {
 

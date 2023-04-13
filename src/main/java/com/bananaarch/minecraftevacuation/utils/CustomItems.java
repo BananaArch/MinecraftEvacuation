@@ -1,4 +1,4 @@
-package com.bananaarch.minecraftevacuation.settings.utils;
+package com.bananaarch.minecraftevacuation.utils;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,7 +10,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.Arrays;
 
 public enum CustomItems {
-
 
     START_REPLAY(
             "Start Replay",
@@ -95,6 +94,27 @@ public enum CustomItems {
             "Click here to get a Teacher block",
             true,
             Material.BEDROCK
+    ),
+    MALE_ITEM(
+            "Sex: Male",
+            ChatColor.BLUE,
+            "Click here to swap sex",
+            true,
+            Material.BLUE_DYE
+    ),
+    FEMALE_ITEM(
+            "Sex: Female",
+            ChatColor.LIGHT_PURPLE,
+            "Click here to swap sex",
+            true,
+            Material.PINK_DYE
+    ),
+    DESTROY_BOT(
+            "Destroy Bot",
+            ChatColor.DARK_RED,
+            "Click here to destroy the bot; this action cannot be undone",
+            true,
+            Material.BARRIER
     );
 
 

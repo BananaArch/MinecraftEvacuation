@@ -3,38 +3,46 @@ package com.bananaarch.minecraftevacuation.settings.blocklistener;
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
 import com.bananaarch.minecraftevacuation.bot.Bot;
 import com.bananaarch.minecraftevacuation.bot.BotManager;
-import com.bananaarch.minecraftevacuation.bot.utils.BotType;
-import com.bananaarch.minecraftevacuation.settings.utils.CustomItems;
+import com.bananaarch.minecraftevacuation.utils.BotType;
+import com.bananaarch.minecraftevacuation.utils.CustomItems;
+import org.bukkit.Sound;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class BlockPlacedListener implements Listener {
-
-    private final BotManager botManager = MinecraftEvacuation.getInstance().getManager();
-
-
 
     @EventHandler
     public void onBlockPlaceEvent(BlockPlaceEvent e) {
 
-        if (e.getPlayer().getInventory().getItemInMainHand().equals(CustomItems.FRESHMAN_ITEM.getItemStack())) {
-            botManager.addBot();
+        Player player = e.getPlayer();
+        ItemStack itemInMainHand = e.getPlayer().getInventory().getItemInMainHand();
+        
+        if (itemInMainHand.equals(CustomItems.FRESHMAN_ITEM.getItemStack())) {
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 8);
+            Bot.createBot(e.getBlockPlaced().getLocation(), "Default name", BotType.FRESHMAN);
+            return;
         }
-        if (e.getPlayer().getInventory().getItemInMainHand().equals(CustomItems.SOPHOMORE_ITEM.getItemStack())) {
-            e.getPlayer().sendMessage("YOLA");
-        }
-
-        if (e.getPlayer().getInventory().getItemInMainHand().equals(CustomItems.JUNIOR_ITEM.getItemStack())) {
-            e.getPlayer().sendMessage("YOLAND");
-        }
-
-        if (e.getPlayer().getInventory().getItemInMainHand().equals(CustomItems.SENIOR_ITEM.getItemStack())) {
-            e.getPlayer().sendMessage("YOLANDA");
+        if (itemInMainHand.equals(CustomItems.SOPHOMORE_ITEM.getItemStack())) {
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 8);
+            return;
         }
 
-        if (e.getPlayer().getInventory().getItemInMainHand().equals(CustomItems.TEACHER_ITEM.getItemStack())) {
+        if (itemInMainHand.equals(CustomItems.JUNIOR_ITEM.getItemStack())) {
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 8);
+            return;
+        }
 
+        if (itemInMainHand.equals(CustomItems.SENIOR_ITEM.getItemStack())) {
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 8);
+            return;
+        }
+
+        if (itemInMainHand.equals(CustomItems.TEACHER_ITEM.getItemStack())) {
+            player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 8);
+            return;
         }
 
     }
