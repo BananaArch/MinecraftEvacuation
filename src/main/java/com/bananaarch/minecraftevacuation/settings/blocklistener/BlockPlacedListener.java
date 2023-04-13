@@ -31,7 +31,7 @@ public class BlockPlacedListener implements Listener {
         if (itemInMainHand.equals(CustomItems.FRESHMAN_ITEM.getItemStack())) {
             player.sendMessage("creating bot");
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 8);
-            botManager.createBot(e.getBlockPlaced().getLocation(), "test", BotType.FRESHMAN);
+            botManager.createBot(e.getPlayer(), e.getBlockPlaced().getLocation(), "test", BotType.FRESHMAN);
             player.sendMessage("finsihed");
             return;
         }
