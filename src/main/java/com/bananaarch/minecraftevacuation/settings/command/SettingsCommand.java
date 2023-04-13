@@ -1,13 +1,13 @@
 package com.bananaarch.minecraftevacuation.settings.command;
 
-import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
-import com.bananaarch.minecraftevacuation.bot.BotManager;
+import com.bananaarch.minecraftevacuation.utils.CustomGUI;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class SettingsCommand implements CommandExecutor {
+
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
 
@@ -18,19 +18,9 @@ public class SettingsCommand implements CommandExecutor {
 
         }
 
-        BotManager botManager = MinecraftEvacuation.getInstance().getManager();
 
         Player player = (Player) commandSender;
-
-//        Bot.createBot(player.getLocation(), "test", BotType.FRESHMAN);
-        try {
-            System.out.println(Stock.onCreate());
-        } catch (Exception e) {
-            System.out.println("TEST");
-        }
-
-
-//        player.openInventory(CustomGUI.SETTINGS_GUI.getInventory());
+        player.openInventory(CustomGUI.SETTINGS_GUI.getInventory());
 
         return false;
 

@@ -11,8 +11,16 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.inventory.ItemStack;
+import org.nd4j.linalg.api.ops.impl.reduce.same.Min;
 
 public class BlockPlacedListener implements Listener {
+
+
+    private final BotManager botManager;
+
+    public BlockPlacedListener() {
+        this.botManager = MinecraftEvacuation.getInstance().getManager();
+    }
 
     @EventHandler
     public void onBlockPlaceEvent(BlockPlaceEvent e) {
@@ -21,8 +29,10 @@ public class BlockPlacedListener implements Listener {
         ItemStack itemInMainHand = e.getPlayer().getInventory().getItemInMainHand();
         
         if (itemInMainHand.equals(CustomItems.FRESHMAN_ITEM.getItemStack())) {
+            player.sendMessage("creating bot");
             player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 8);
-            Bot.createBot(e.getBlockPlaced().getLocation(), "Default name", BotType.FRESHMAN);
+            botManager.createBot(e.getBlockPlaced().getLocation(), "test", BotType.FRESHMAN);
+            player.sendMessage("finsihed");
             return;
         }
         if (itemInMainHand.equals(CustomItems.SOPHOMORE_ITEM.getItemStack())) {

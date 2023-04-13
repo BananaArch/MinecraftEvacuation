@@ -30,6 +30,10 @@ public final class MinecraftEvacuation extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+
+        instance = this;
+        this.manager = new BotManager();
+
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new GUIListener(), this);
         Bukkit.getPluginManager().registerEvents(new BlockPlacedListener(), this);
