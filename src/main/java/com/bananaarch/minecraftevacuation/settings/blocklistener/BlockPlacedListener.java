@@ -19,8 +19,7 @@ public class BlockPlacedListener implements Listener {
     public void onBlockPlaceEvent(BlockPlaceEvent e) {
 
         if (e.getPlayer().getInventory().getItemInMainHand().equals(CustomItems.FRESHMAN_ITEM.getItemStack())) {
-            botManager.addBot(Bot.createBot(e.getBlockPlaced().getLocation(), "test", BotType.));
-
+            botManager.addBot();
         }
         if (e.getPlayer().getInventory().getItemInMainHand().equals(CustomItems.SOPHOMORE_ITEM.getItemStack())) {
             e.getPlayer().sendMessage("YOLA");

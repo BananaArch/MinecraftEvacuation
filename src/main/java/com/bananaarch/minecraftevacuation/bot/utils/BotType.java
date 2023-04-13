@@ -2,16 +2,25 @@ package com.bananaarch.minecraftevacuation.bot.utils;
 
 public enum BotType {
 
-    FRESHMAN(new String[]{}),
-    SENIOR(new String[]{"test", "as"});
-    private String[] skin;
+//  https://mineskin.org/
+//  value, signature
 
-    BotType(String[] skin) {
+    FRESHMAN(new String[][]{new String[]{}, new String[]{}}),
+    SOPHOMORE(new String[][]{new String[]{}, new String[]{}}),
+    JUNIOR(new String[][]{new String[]{}, new String[]{}}),
+    SENIOR(new String[][]{new String[]{}, new String[]{}}),
+    TEACHER(new String[][]{new String[]{}, new String[]{}});
+    private String[][] skin;
+
+    BotType(String[][] skin) {
         this.skin = skin;
     };
 
-    public String[] getSkin() {
-        return skin;
+    public String[] getSkin(boolean isMale) {
+        if (isMale)
+            return skin[0];
+        else
+            return skin[1];
     }
 
 }

@@ -45,8 +45,9 @@ public class Bot extends ServerPlayer {
     private Vector velocity;
     private Location initialLocation;
     private Location targetLocation;
+    private boolean isMale;
 
-    private Bot(MinecraftServer minecraftserver, ServerLevel worldserver, GameProfile gameprofile, Location initialLocation) {
+    private Bot(MinecraftServer minecraftserver, ServerLevel worldserver, GameProfile gameprofile, Location initialLocation, boolean isMale) {
         super(minecraftserver, worldserver, gameprofile);
         
         this.plugin = MinecraftEvacuation.getInstance();
@@ -54,6 +55,7 @@ public class Bot extends ServerPlayer {
         this.initialLocation = initialLocation;
         this.scheduler = Bukkit.getScheduler();
         this.velocity = new Vector(0, 0, 0);
+        this.isMale = isMale;
 
     }
 
@@ -64,12 +66,13 @@ public class Bot extends ServerPlayer {
         UUID uuid = BotUtils.randomSteveUUID();
         GameProfile gameProfile = new GameProfile(uuid, name.length() > 16 ? name.substring(0, 16) : name);
 
-        String[] skin = botType.getSkin();
+        boolean isMale = Math.random() < .5;
+        String[] skin = botType.getSkin(isMale);
         if (skin != null) {
             gameProfile.getProperties().put("textures", new Property("textures", skin[0], skin[1]));
         }
 
-        Bot bot = new Bot(nmsServer, nmsWorld, gameProfile, initialLocation);
+        Bot bot = new Bot(nmsServer, nmsWorld, gameProfile, initialLocation, isMale);
 
         bot.connection = new ServerGamePacketListenerImpl(nmsServer, new Connection(PacketFlow.CLIENTBOUND) {
 
@@ -129,6 +132,10 @@ public class Bot extends ServerPlayer {
         addVelocity(velocity);
         if (velocity.length() > max)
             velocity.normalize().multiply(max);
+    }
+
+    public void swapSex() {
+
     }
 
     public void addVelocity(Vector vector) {
