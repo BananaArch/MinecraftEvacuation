@@ -1,10 +1,16 @@
 package com.bananaarch.minecraftevacuation.bot;
 
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
+import com.bananaarch.minecraftevacuation.utils.BotType;
 import com.bananaarch.minecraftevacuation.utils.GameStateUtil;
 import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+import net.minecraft.network.Connection;
+import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.game.ClientboundAddPlayerPacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundRotateHeadPacket;
 import net.minecraft.network.protocol.game.ClientboundSetEntityDataPacket;
 import net.minecraft.server.MinecraftServer;
@@ -12,35 +18,72 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.api.ops.impl.reduce.same.Min;
+
+import javax.annotation.Nullable;
+import java.util.UUID;
 
 public class Bot extends ServerPlayer {
 
-    private final MinecraftEvacuation plugin;
-    private final BotAgent botAgent;
     private final BukkitScheduler scheduler;
     private Vector velocity;
     private Location initialLocation;
     private Location targetLocation;
-    private boolean isMale;
+    private BotType botType;
 
-    public Bot(MinecraftServer minecraftserver, ServerLevel worldserver, GameProfile gameprofile, Location initialLocation, boolean isMale) {
+    private Bot(MinecraftServer minecraftserver, ServerLevel worldserver, GameProfile gameprofile, Location initialLocation, BotType botType) {
         super(minecraftserver, worldserver, gameprofile);
-        
-        this.plugin = MinecraftEvacuation.getInstance();
-        this.botAgent = plugin.getManager().getBotAgent();
+
         this.initialLocation = initialLocation;
         this.scheduler = Bukkit.getScheduler();
         this.velocity = new Vector(0, 0, 0);
-        this.isMale = isMale;
+        this.botType = botType;
+
+    }
+
+    public static void createBot(Location initialLocation, String name, BotType botType) {
+
+        MinecraftServer nmsServer = ((CraftServer) Bukkit.getServer()).getServer();
+        ServerLevel nmsWorld = nmsServer.getLevel(Level.OVERWORLD);
+
+        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), name.length() > 16 ? name.substring(0, 16) : name);
+        boolean isMale = Math.random() < .5;
+        String[] skin = botType.getSkin(isMale);
+        gameProfile.getProperties().put("textures", new Property("textures", skin[0], skin[1]));
+
+        Bot bot = new Bot(nmsServer, nmsWorld, gameProfile, initialLocation, botType);
+
+        bot.connection = new ServerGamePacketListenerImpl(nmsServer, new Connection(PacketFlow.CLIENTBOUND) {
+
+            @Override
+            public void send(Packet<?> packet, @Nullable PacketSendListener callbacks) {
+
+            }
+
+        }, bot);
+
+        bot.setPos(initialLocation.getX(), initialLocation.getY(), initialLocation.getZ());
+        bot.setRot(initialLocation.getYaw(), initialLocation.getPitch());
+
+        Bukkit.getOnlinePlayers().forEach(p -> ((CraftPlayer) p).getHandle().connection.send(
+                new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, bot)
+        ));
+
+        nmsWorld.addNewPlayer(bot);
+        bot.renderAll();
+
+        MinecraftEvacuation.getInstance().getManager().addBot(bot);
 
     }
 
