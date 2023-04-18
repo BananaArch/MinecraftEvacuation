@@ -24,27 +24,27 @@ public class BlockPlacedListener implements Listener {
         Location blockPlacedLocation = e.getBlockPlaced().getLocation();
         
         if (itemInMainHand.equals(CustomItems.FRESHMAN_ITEM.getItemStack())) {
-            BlockPlaceUtil.placedBlock(player, blockPlacedLocation, BotType.FRESHMAN);
+            BlockPlaceUtil.placedBlock(e, player, blockPlacedLocation, BotType.FRESHMAN);
             return;
         }
 
         if (itemInMainHand.equals(CustomItems.SOPHOMORE_ITEM.getItemStack())) {
-            BlockPlaceUtil.placedBlock(player, blockPlacedLocation, BotType.SOPHOMORE);
+            BlockPlaceUtil.placedBlock(e, player, blockPlacedLocation, BotType.SOPHOMORE);
             return;
         }
 
         if (itemInMainHand.equals(CustomItems.JUNIOR_ITEM.getItemStack())) {
-            BlockPlaceUtil.placedBlock(player, blockPlacedLocation, BotType.JUNIOR);
+            BlockPlaceUtil.placedBlock(e, player, blockPlacedLocation, BotType.JUNIOR);
             return;
         }
 
         if (itemInMainHand.equals(CustomItems.SENIOR_ITEM.getItemStack())) {
-            BlockPlaceUtil.placedBlock(player, blockPlacedLocation, BotType.SENIOR);
+            BlockPlaceUtil.placedBlock(e, player, blockPlacedLocation, BotType.SENIOR);
             return;
         }
 
         if (itemInMainHand.equals(CustomItems.TEACHER_ITEM.getItemStack())) {
-            BlockPlaceUtil.placedBlock(player, blockPlacedLocation, BotType.TEACHER);
+            BlockPlaceUtil.placedBlock(e, player, blockPlacedLocation, BotType.TEACHER);
             return;
         }
 

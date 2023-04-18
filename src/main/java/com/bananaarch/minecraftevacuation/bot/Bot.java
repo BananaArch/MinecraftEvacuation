@@ -34,7 +34,7 @@ import org.nd4j.linalg.api.ops.impl.reduce.same.Min;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class Bot extends ServerPlayer {
+public abstract class Bot extends ServerPlayer {
 
     private final BukkitScheduler scheduler;
     private Vector velocity;
@@ -42,48 +42,13 @@ public class Bot extends ServerPlayer {
     private Location targetLocation;
     private BotType botType;
 
-    private Bot(MinecraftServer minecraftserver, ServerLevel worldserver, GameProfile gameprofile, Location initialLocation, BotType botType) {
+    protected Bot(MinecraftServer minecraftserver, ServerLevel worldserver, GameProfile gameprofile, Location initialLocation, BotType botType) {
         super(minecraftserver, worldserver, gameprofile);
 
         this.initialLocation = initialLocation;
         this.scheduler = Bukkit.getScheduler();
         this.velocity = new Vector(0, 0, 0);
         this.botType = botType;
-
-    }
-
-    public static void createBot(Location initialLocation, String name, BotType botType) {
-
-        MinecraftServer nmsServer = ((CraftServer) Bukkit.getServer()).getServer();
-        ServerLevel nmsWorld = nmsServer.getLevel(Level.OVERWORLD);
-
-        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), name.length() > 16 ? name.substring(0, 16) : name);
-        boolean isMale = Math.random() < .5;
-        String[] skin = botType.getSkin(isMale);
-        gameProfile.getProperties().put("textures", new Property("textures", skin[0], skin[1]));
-
-        Bot bot = new Bot(nmsServer, nmsWorld, gameProfile, initialLocation, botType);
-
-        bot.connection = new ServerGamePacketListenerImpl(nmsServer, new Connection(PacketFlow.CLIENTBOUND) {
-
-            @Override
-            public void send(Packet<?> packet, @Nullable PacketSendListener callbacks) {
-
-            }
-
-        }, bot);
-
-        bot.setPos(initialLocation.getX(), initialLocation.getY(), initialLocation.getZ());
-        bot.setRot(initialLocation.getYaw(), initialLocation.getPitch());
-
-        Bukkit.getOnlinePlayers().forEach(p -> ((CraftPlayer) p).getHandle().connection.send(
-                new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, bot)
-        ));
-
-        nmsWorld.addNewPlayer(bot);
-        bot.renderAll();
-
-        MinecraftEvacuation.getInstance().getManager().addBot(bot);
 
     }
 

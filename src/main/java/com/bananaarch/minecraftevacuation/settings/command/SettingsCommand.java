@@ -1,5 +1,7 @@
 package com.bananaarch.minecraftevacuation.settings.command;
 
+import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
+import com.bananaarch.minecraftevacuation.bot.BotManager;
 import com.bananaarch.minecraftevacuation.utils.CustomGUI;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -21,6 +23,7 @@ public class SettingsCommand implements CommandExecutor {
 
         Player player = (Player) commandSender;
         player.openInventory(CustomGUI.SETTINGS_GUI.getInventory());
+
 
         return false;
 
