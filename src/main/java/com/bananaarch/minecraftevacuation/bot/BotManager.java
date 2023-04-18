@@ -36,40 +36,8 @@ public class BotManager {
         this.botAgent = new BotAgent(this, MinecraftEvacuation.getInstance());
     }
 
-    public static void createBot(Location initialLocation, String name, BotType botType) {
-
-        MinecraftServer nmsServer = ((CraftServer) Bukkit.getServer()).getServer();
-        ServerLevel nmsWorld = nmsServer.getLevel(Level.OVERWORLD);
-
-        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), name.length() > 16 ? name.substring(0, 16) : name);
-        boolean isMale = Math.random() < .5;
-        String[] skin = botType.getSkin(isMale);
-        gameProfile.getProperties().put("textures", new Property("textures", skin[0], skin[1]));
-
-        Bot bot = new Bot(nmsServer, nmsWorld, gameProfile, initialLocation, botType);
-
-        bot.connection = new ServerGamePacketListenerImpl(nmsServer, new Connection(PacketFlow.CLIENTBOUND) {
-
-            @Override
-            public void send(Packet<?> packet, @Nullable PacketSendListener callbacks) {
-
-            }
-
-        }, bot);
-
-        bot.setPos(initialLocation.getX(), initialLocation.getY(), initialLocation.getZ());
-//        bot.setYRot(3);
-//        bot.setXRot();
-
-        Bukkit.getOnlinePlayers().forEach(p -> ((CraftPlayer) p).getHandle().connection.send(
-                new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, bot)
-        ));
-
-        nmsWorld.addNewPlayer(bot);
-        bot.renderAll();
-
-        MinecraftEvacuation.getInstance().getManager().addBot(bot);
-
+    public void addBot(Bot bot) {
+        bots.add(bot);
     }
 
     public Set<Bot> getBots() {

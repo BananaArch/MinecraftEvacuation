@@ -39,16 +39,14 @@ public abstract class Bot extends ServerPlayer {
     private final BukkitScheduler scheduler;
     private Vector velocity;
     private Location initialLocation;
-    private Location targetLocation;
-    private BotType botType;
 
-    protected Bot(MinecraftServer minecraftserver, ServerLevel worldserver, GameProfile gameprofile, Location initialLocation, BotType botType) {
+
+    protected Bot(MinecraftServer minecraftserver, ServerLevel worldserver, GameProfile gameprofile, Location initialLocation) {
         super(minecraftserver, worldserver, gameprofile);
 
         this.initialLocation = initialLocation;
         this.scheduler = Bukkit.getScheduler();
         this.velocity = new Vector(0, 0, 0);
-        this.botType = botType;
 
     }
 

@@ -1,4 +1,4 @@
-package com.bananaarch.minecraftevacuation.bot.botsubclasses;
+package com.bananaarch.minecraftevacuation.bot.subclasses;
 
 import com.bananaarch.minecraftevacuation.bot.Bot;
 import com.bananaarch.minecraftevacuation.utils.BotType;
@@ -9,10 +9,8 @@ import org.bukkit.Location;
 
 public class Freshman extends Bot {
 
-    private Freshman(MinecraftServer minecraftserver, ServerLevel worldserver, GameProfile gameprofile, Location initialLocation, BotType botType) {
-        super(minecraftserver, worldserver, gameprofile, initialLocation, botType);
-
-
+    public Freshman(MinecraftServer minecraftserver, ServerLevel worldserver, GameProfile gameprofile, Location initialLocation) {
+        super(minecraftserver, worldserver, gameprofile, initialLocation);
     }
 
 }
