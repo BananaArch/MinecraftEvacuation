@@ -33,8 +33,6 @@ public class BotFactory {
 
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), name.length() > 16 ? name.substring(0, 16) : name);
         boolean isMale = Math.random() < .5;
-        String[] skin = botType.getSkin(isMale);
-        gameProfile.getProperties().put("textures", new Property("textures", skin[0], skin[1]));
 
 //        --see type--
 

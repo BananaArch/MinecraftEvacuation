@@ -36,7 +36,7 @@ import java.util.UUID;
 
 public abstract class Bot extends ServerPlayer {
 
-    private final BukkitScheduler scheduler;
+    private final BukkitScheduler scheduler = Bukkit.getScheduler();
     private Vector velocity;
     private Location initialLocation;
 
@@ -45,7 +45,6 @@ public abstract class Bot extends ServerPlayer {
         super(minecraftserver, worldserver, gameprofile);
 
         this.initialLocation = initialLocation;
-        this.scheduler = Bukkit.getScheduler();
         this.velocity = new Vector(0, 0, 0);
 
     }
@@ -86,40 +85,6 @@ public abstract class Bot extends ServerPlayer {
             velocity.normalize().multiply(max);
     }
 
-    public void swapSex() {
-
-    }
-
-    public void addVelocity(Vector vector) {
-        if (NumberConversions.isFinite(vector.getX()) && NumberConversions.isFinite(vector.getY()) && NumberConversions.isFinite(vector.getZ())) {
-            velocity.add(vector);
-        } else {
-            velocity = vector;
-        }
-        look(velocity);
-    }
-
-    public Vector getVelocity() {
-        return velocity.clone();
-    }
-    
-    public void setVelocity(Vector velocity) {
-        this.velocity = velocity;
-        look(velocity);
-    }
-
-    public BoundingBox getBotBoundingBox() {
-        return getBukkitEntity().getBoundingBox();
-    }
-    
-    public Location getLocation() {
-        return getBukkitEntity().getLocation();
-    }
-
-    public INDArray getGameState() {
-        return GameStateUtil.getGameState(getLocation());
-    }
-
     private void look(Vector vector) {
         float yaw, pitch;
 
@@ -138,5 +103,60 @@ public abstract class Bot extends ServerPlayer {
 
         setRot(yaw, pitch);
     }
+
+    public void setSkin(String value, String signature) {
+
+        //  https://mineskin.org/
+        //  value, signature
+        getGameProfile().getProperties().put("textures", new Property("textures", value, signature));
+    }
+
+
+    public void swapSex() {
+
+    }
+
+    public void hide() {
+
+        setHealth(0);
+
+    }
+
+    public void show() {
+
+        setHealth(20);
+
+    }
+
+    public void addVelocity(Vector vector) {
+        if (NumberConversions.isFinite(vector.getX()) && NumberConversions.isFinite(vector.getY()) && NumberConversions.isFinite(vector.getZ())) {
+            velocity.add(vector);
+        } else {
+            velocity = vector;
+        }
+        look(velocity);
+    }
+
+    public Vector getVelocity() {
+        return velocity.clone();
+    }
+
+    public void setVelocity(Vector velocity) {
+        this.velocity = velocity;
+        look(velocity);
+    }
+
+    public BoundingBox getBotBoundingBox() {
+        return getBukkitEntity().getBoundingBox();
+    }
+
+    public Location getLocation() {
+        return getBukkitEntity().getLocation();
+    }
+
+    public INDArray getGameState() {
+        return GameStateUtil.getGameState(getLocation());
+    }
+
 
 }

@@ -48,10 +48,19 @@ public class BotManager {
         return botAgent;
     }
 
-    public void walk() {
-        for (Bot bot : bots) {
-            bot.walk(new Vector(1, 0, 1));
-        }
+//    public void walk() {
+//        for (Bot bot : bots) {
+//            bot.walk(new Vector(1, 0, 1));
+//        }
+//    }
+
+    public void hideAll() {
+
+        bots.forEach(Bot::hide);
+    }
+
+    public void showAll() {
+        bots.forEach(Bot::show);
     }
 
 }

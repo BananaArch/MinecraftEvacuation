@@ -40,16 +40,16 @@ public enum CustomItems {
             Material.NETHER_STAR
     ),
     SHOW_STUDENTS(
-            "Show Students",
+            "Visibility: Revealed",
             ChatColor.GREEN,
-            "Click here to show Student NPCs",
+            "Click here to hide Student NPCs",
             false,
             Material.LIME_CANDLE
     ),
     HIDE_STUDENTS(
-            "Hide Students",
+            "Visibility: Hidden",
             ChatColor.RED,
-            "Click here to hide Student NPCs",
+            "Click here to show Student NPCs",
             false,
             Material.RED_CANDLE
     ),
