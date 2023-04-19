@@ -55,7 +55,6 @@ public class BotManager {
 //    }
 
     public void hideAll() {
-
         bots.forEach(Bot::hide);
     }
 

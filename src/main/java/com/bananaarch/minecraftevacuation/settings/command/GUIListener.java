@@ -27,6 +27,7 @@ public class GUIListener implements Listener {
 
             e.setCancelled(true);
 
+//            if clicked in player's own inventory
             if (e.getClickedInventory().equals(e.getWhoClicked().getInventory()))
                 return;
 
@@ -50,7 +51,6 @@ public class GUIListener implements Listener {
                 return;
             }
             if (e.getCurrentItem().isSimilar(CustomItems.STOP_TRAINING.getItemStack())) {
-                botManager.showAll();
                 CustomGUI.SETTINGS_GUI.setItem(4, CustomItems.START_TRAINING.getItemStack());
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                 return;
@@ -62,7 +62,7 @@ public class GUIListener implements Listener {
                 return;
             }
             if (e.getCurrentItem().isSimilar(CustomItems.HIDE_STUDENTS.getItemStack())) {
-
+                botManager.showAll();
                 CustomGUI.SETTINGS_GUI.setItem(5, CustomItems.SHOW_STUDENTS.getItemStack());
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                 return;

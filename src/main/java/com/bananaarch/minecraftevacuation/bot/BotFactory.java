@@ -48,6 +48,7 @@ public class BotFactory {
             bot = new Teacher(nmsServer, nmsWorld, gameProfile, initialLocation);
         } else {
 
+            System.out.println("Invalid bot type");
             throw new IllegalArgumentException();
 
         }
