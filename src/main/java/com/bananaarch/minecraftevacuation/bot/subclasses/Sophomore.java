@@ -28,15 +28,15 @@ public class Sophomore extends Bot implements Genderable {
 
     public Sophomore(MinecraftServer minecraftserver, ServerLevel worldserver, GameProfile gameprofile, Location initialLocation) {
         super(minecraftserver, worldserver, gameprofile, initialLocation);
-
         Gender[] values = Gender.values();
-        this.gender = values[(int) (values.length * Math.random())];
+        Gender randomGender = values[(int) (values.length * Math.random())];
+        setGender(randomGender);
 
-        setGender(gender);
     }
 
     @Override
     public void setGender(Gender gender) {
+        this.gender = gender;
         String[] skin = skins.get(gender);
         if (skin != null)
             setSkin(skin[0], skin[1]);

@@ -30,22 +30,18 @@ public class Junior extends Bot implements Genderable {
     public Junior(MinecraftServer minecraftserver, ServerLevel worldserver, GameProfile gameprofile, Location initialLocation) {
         super(minecraftserver, worldserver, gameprofile, initialLocation);
         Gender[] values = Gender.values();
-
         Gender randomGender = values[(int) (values.length * Math.random())];
-
         setGender(randomGender);
-
-        this.gender = randomGender;
 
     }
 
     @Override
     public void setGender(Gender gender) {
-        String[] skin = skins.get(gender);
         this.gender = gender;
-
+        String[] skin = skins.get(gender);
         if (skin != null)
             setSkin(skin[0], skin[1]);
+
     }
 
     @Override

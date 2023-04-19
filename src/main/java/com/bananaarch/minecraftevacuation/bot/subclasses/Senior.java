@@ -28,15 +28,14 @@ public class Senior extends Bot implements Genderable {
 
     public Senior(MinecraftServer minecraftserver, ServerLevel worldserver, GameProfile gameprofile, Location initialLocation) {
         super(minecraftserver, worldserver, gameprofile, initialLocation);
-
         Gender[] values = Gender.values();
-        this.gender = values[(int) (values.length * Math.random())];
-
-        setGender(gender);
+        Gender randomGender = values[(int) (values.length * Math.random())];
+        setGender(randomGender);
     }
 
     @Override
     public void setGender(Gender gender) {
+        this.gender = gender;
         String[] skin = skins.get(gender);
         if (skin != null)
             setSkin(skin[0], skin[1]);
