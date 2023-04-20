@@ -1,7 +1,6 @@
-package com.bananaarch.minecraftevacuation.settings.blocklistener;
+package com.bananaarch.minecraftevacuation.ux.listeners;
 
 import com.bananaarch.minecraftevacuation.bot.BotFactory;
-import com.bananaarch.minecraftevacuation.bot.subclasses.Junior;
 import com.bananaarch.minecraftevacuation.utils.BotType;
 import com.bananaarch.minecraftevacuation.utils.CustomItems;
 import org.bukkit.ChatColor;

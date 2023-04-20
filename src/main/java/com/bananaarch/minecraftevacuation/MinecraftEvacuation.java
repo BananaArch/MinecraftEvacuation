@@ -1,11 +1,11 @@
 package com.bananaarch.minecraftevacuation;
 
 import com.bananaarch.minecraftevacuation.bot.BotManager;
-import com.bananaarch.minecraftevacuation.settings.blocklistener.BlockPlacedListener;
-import com.bananaarch.minecraftevacuation.settings.command.GUIListener;
-import com.bananaarch.minecraftevacuation.settings.command.SettingsCommand;
+import com.bananaarch.minecraftevacuation.ux.listeners.BlockPlacedListener;
+import com.bananaarch.minecraftevacuation.ux.listeners.ConnectionListener;
+import com.bananaarch.minecraftevacuation.ux.listeners.GUIListener;
+import com.bananaarch.minecraftevacuation.ux.command.MenuCommand;
 import net.md_5.bungee.api.ChatColor;
-import net.minecraft.server.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -39,7 +39,8 @@ public final class MinecraftEvacuation extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new GUIListener(), this);
         Bukkit.getPluginManager().registerEvents(new BlockPlacedListener(), this);
-        getCommand("settings").setExecutor(new SettingsCommand());
+        Bukkit.getPluginManager().registerEvents(new ConnectionListener(), this);
+        getCommand("menu").setExecutor(new MenuCommand());
 
 
 

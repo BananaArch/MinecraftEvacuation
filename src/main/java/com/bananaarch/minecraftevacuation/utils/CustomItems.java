@@ -53,6 +53,20 @@ public enum CustomItems {
             false,
             Material.RED_CANDLE
     ),
+    DESTROY_ALL_BOTS(
+            "Destroy all bots",
+            ChatColor.DARK_RED,
+            "Click here to destroy all bots",
+            false,
+            Material.TNT
+    ),
+    CONFIRM_DESTROY_ALL_BOTS(
+            "THIS ACTION CANNOT BE UNDONE!",
+            ChatColor.DARK_RED,
+            "Click to confirm that you want to " + ChatColor.RED + "DELETE ALL BOTS",
+            true,
+            Material.SCULK_SENSOR
+    ),
     EXIT_ITEM(
             "Exit",
             ChatColor.DARK_RED,

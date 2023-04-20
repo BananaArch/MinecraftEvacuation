@@ -62,4 +62,14 @@ public class BotManager {
         bots.forEach(Bot::show);
     }
 
+    public int destroyAll() {
+        bots.forEach(Bot::destroy);
+
+        int output = bots.size();
+        bots.clear();
+        System.out.println("Successfully cleared " + output + " bots");
+        return output;
+
+//        TODO: Delete serializable filen
+    }
 }

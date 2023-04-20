@@ -1,14 +1,16 @@
-package com.bananaarch.minecraftevacuation.settings.command;
+package com.bananaarch.minecraftevacuation.ux.listeners;
 
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
 import com.bananaarch.minecraftevacuation.bot.BotManager;
 import com.bananaarch.minecraftevacuation.utils.CustomItems;
 import com.bananaarch.minecraftevacuation.utils.CustomGUI;
+import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 
 
 public class GUIListener implements Listener {
@@ -23,7 +25,7 @@ public class GUIListener implements Listener {
 
 //        SETTINGS GUI
 
-        if (e.getInventory().equals(CustomGUI.SETTINGS_GUI.getInventory())) {
+        if (e.getInventory().equals(CustomGUI.MENU_GUI.getInventory())) {
 
             e.setCancelled(true);
 
@@ -36,34 +38,46 @@ public class GUIListener implements Listener {
 
 
             if (e.getCurrentItem().isSimilar(CustomItems.START_REPLAY.getItemStack())) {
-                CustomGUI.SETTINGS_GUI.setItem(3, CustomItems.STOP_REPLAY.getItemStack());
+                CustomGUI.MENU_GUI.setItem(3, CustomItems.STOP_REPLAY.getItemStack());
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                 return;
             }
             if (e.getCurrentItem().isSimilar(CustomItems.STOP_REPLAY.getItemStack())) {
-                CustomGUI.SETTINGS_GUI.setItem(3, CustomItems.START_REPLAY.getItemStack());
+                CustomGUI.MENU_GUI.setItem(3, CustomItems.START_REPLAY.getItemStack());
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                 return;
             }
             if (e.getCurrentItem().isSimilar(CustomItems.START_TRAINING.getItemStack())) {
-                CustomGUI.SETTINGS_GUI.setItem(4, CustomItems.STOP_TRAINING.getItemStack());
+                CustomGUI.MENU_GUI.setItem(4, CustomItems.STOP_TRAINING.getItemStack());
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                 return;
             }
             if (e.getCurrentItem().isSimilar(CustomItems.STOP_TRAINING.getItemStack())) {
-                CustomGUI.SETTINGS_GUI.setItem(4, CustomItems.START_TRAINING.getItemStack());
+                CustomGUI.MENU_GUI.setItem(4, CustomItems.START_TRAINING.getItemStack());
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                 return;
             }
             if (e.getCurrentItem().isSimilar(CustomItems.SHOW_STUDENTS.getItemStack())) {
                 botManager.hideAll();
-                CustomGUI.SETTINGS_GUI.setItem(5, CustomItems.HIDE_STUDENTS.getItemStack());
+                CustomGUI.MENU_GUI.setItem(5, CustomItems.HIDE_STUDENTS.getItemStack());
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                 return;
             }
             if (e.getCurrentItem().isSimilar(CustomItems.HIDE_STUDENTS.getItemStack())) {
                 botManager.showAll();
-                CustomGUI.SETTINGS_GUI.setItem(5, CustomItems.SHOW_STUDENTS.getItemStack());
+                CustomGUI.MENU_GUI.setItem(5, CustomItems.SHOW_STUDENTS.getItemStack());
+                player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
+                return;
+            }
+            if (e.getCurrentItem().isSimilar(CustomItems.DESTROY_ALL_BOTS.getItemStack())) {
+                CustomGUI.MENU_GUI.setItem(6, CustomItems.CONFIRM_DESTROY_ALL_BOTS.getItemStack());
+                player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
+                return;
+            }
+            if (e.getCurrentItem().isSimilar(CustomItems.CONFIRM_DESTROY_ALL_BOTS.getItemStack())) {
+                int amountDestroyed = botManager.destroyAll();
+                player.sendMessage(ChatColor.GRAY + "Successfully destroyed " + ChatColor.DARK_RED + amountDestroyed + " bots");
+                CustomGUI.MENU_GUI.setItem(6, CustomItems.DESTROY_ALL_BOTS.getItemStack());
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                 return;
             }
@@ -100,5 +114,14 @@ public class GUIListener implements Listener {
 
         }
 
+    }
+
+    @EventHandler
+    public void onInventoryClose(InventoryCloseEvent e) {
+        if (e.getInventory().equals(CustomGUI.MENU_GUI.getInventory())) {
+
+            CustomGUI.MENU_GUI.setItem(6, CustomItems.DESTROY_ALL_BOTS.getItemStack());
+
+        }
     }
 }

@@ -1,14 +1,12 @@
-package com.bananaarch.minecraftevacuation.settings.command;
+package com.bananaarch.minecraftevacuation.ux.command;
 
-import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
-import com.bananaarch.minecraftevacuation.bot.BotManager;
 import com.bananaarch.minecraftevacuation.utils.CustomGUI;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class SettingsCommand implements CommandExecutor {
+public class MenuCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
@@ -20,10 +18,8 @@ public class SettingsCommand implements CommandExecutor {
 
         }
 
-
         Player player = (Player) commandSender;
-        player.openInventory(CustomGUI.SETTINGS_GUI.getInventory());
-
+        player.openInventory(CustomGUI.MENU_GUI.getInventory());
 
         return false;
 

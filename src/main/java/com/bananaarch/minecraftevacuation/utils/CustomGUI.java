@@ -1,6 +1,5 @@
 package com.bananaarch.minecraftevacuation.utils;
 
-import com.bananaarch.minecraftevacuation.utils.CustomItems;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.inventory.Inventory;
@@ -9,13 +8,14 @@ import org.bukkit.inventory.ItemStack;
 import java.util.HashMap;
 
 public enum CustomGUI {
-    SETTINGS_GUI(
+    MENU_GUI(
             27,
-            ChatColor.WHITE + "Settings",
+            ChatColor.WHITE + "Menu",
             new HashMap<Integer, ItemStack>() {{
                 put(3, CustomItems.START_REPLAY.getItemStack());
                 put(4, CustomItems.START_TRAINING.getItemStack());
                 put(5, CustomItems.SHOW_STUDENTS.getItemStack());
+                put(6, CustomItems.DESTROY_ALL_BOTS.getItemStack());
                 put(11, CustomItems.FRESHMAN_ITEM.getItemStack());
                 put(12, CustomItems.SOPHOMORE_ITEM.getItemStack());
                 put(13, CustomItems.JUNIOR_ITEM.getItemStack());

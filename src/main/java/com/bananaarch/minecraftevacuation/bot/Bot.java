@@ -64,6 +64,15 @@ public abstract class Bot extends ServerPlayer {
         sendPacket(addPlayerPacket);
     }
 
+    public void destroy() {
+
+        this.remove(RemovalReason.KILLED);
+        this.hide();
+        this.velocity = null;
+        this.initialLocation = null;
+
+    }
+
     private void render(ServerGamePacketListenerImpl connection, Packet<?>[] packets) {
         connection.send(packets[0]);
         connection.send(packets[1]);
