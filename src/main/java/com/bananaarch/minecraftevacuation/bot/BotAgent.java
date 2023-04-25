@@ -36,6 +36,10 @@ public class BotAgent {
         }
     }
 
+    public void addTask(BukkitRunnable bukkitRunnable) {
+        taskList.add(bukkitRunnable);
+    }
+
     public void stopAllTasks() {
         if(!taskList.isEmpty()) {
             taskList.stream().filter(t -> !t.isCancelled()).forEach(BukkitRunnable::cancel);

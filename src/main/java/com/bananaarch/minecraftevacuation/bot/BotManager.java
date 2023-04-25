@@ -1,35 +1,19 @@
 package com.bananaarch.minecraftevacuation.bot;
 
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
-import com.bananaarch.minecraftevacuation.utils.BotType;
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
-import net.minecraft.network.Connection;
-import net.minecraft.network.PacketSendListener;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.PacketFlow;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import net.minecraft.world.level.Level;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
-import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
-import javax.annotation.Nullable;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BotManager {
 
     private final Set<Bot> bots;
     private final BotAgent botAgent;
+    private boolean isVisible;
+
 
     public BotManager() {
         this.bots = ConcurrentHashMap.newKeySet();
@@ -55,11 +39,38 @@ public class BotManager {
 //    }
 
     public void hideAll() {
+        this.isVisible = false;
         bots.forEach(Bot::hide);
     }
 
     public void showAll() {
+        this.isVisible = true;
         bots.forEach(Bot::show);
+    }
+
+    public void updateBotsForJoiningPlayers(Player player) {
+        bots.forEach(b -> b.updateBotForJoiningPlayers(player));
+        if (!isVisible)
+            bots.forEach(b -> {
+
+                // for some reason doesn't hide unless you add scheduler
+                new BukkitRunnable() {
+                    @Override
+                    public void run() {
+                        b.hideForJoiningPlayers(player);
+                        this.cancel();
+                    }
+                }.runTaskLater(MinecraftEvacuation.getInstance(), 1L); // 20 ticks = 1 second
+
+            });
+    }
+
+    public boolean getVisibility() {
+        return isVisible;
+    }
+
+    public int getSize() {
+        return bots.size();
     }
 
     public int destroyAll() {
@@ -67,7 +78,7 @@ public class BotManager {
 
         int output = bots.size();
         bots.clear();
-        System.out.println("Successfully cleared " + output + " bots");
+        System.out.println("Successfully destroyed " + output + " bots");
         return output;
 
 //        TODO: Delete serializable filen

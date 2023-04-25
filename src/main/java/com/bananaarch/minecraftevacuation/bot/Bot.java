@@ -1,27 +1,17 @@
 package com.bananaarch.minecraftevacuation.bot;
 
-import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
-import com.bananaarch.minecraftevacuation.utils.BotType;
 import com.bananaarch.minecraftevacuation.utils.GameStateUtil;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import net.minecraft.network.Connection;
-import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.game.*;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.craftbukkit.v1_19_R3.CraftServer;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -29,11 +19,6 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.api.ops.impl.reduce.same.Min;
-
-import javax.annotation.Nullable;
-import java.util.Collection;
-import java.util.UUID;
 
 public abstract class Bot extends ServerPlayer {
 
@@ -50,8 +35,24 @@ public abstract class Bot extends ServerPlayer {
     }
 
     public void renderAll() {
-        Packet<?>[] packets = getRenderPackets();
-        Bukkit.getOnlinePlayers().forEach(p -> render(((CraftPlayer) p).getHandle().connection, packets));
+        Packet<?> addPlayerPacket = new ClientboundAddPlayerPacket(this);
+        Packet<?> setEntityDataPacket = new ClientboundSetEntityDataPacket(this.getId(), this.entityData.packDirty());
+        Packet<?> rotateHeadPacket = new ClientboundRotateHeadPacket(this, (byte) ((this.yHeadRot * 256f) / 360f));
+
+        sendPacket(addPlayerPacket);
+        sendPacket(setEntityDataPacket);
+        sendPacket(rotateHeadPacket);
+    }
+
+    public void show() {
+        Packet<?> addPlayerPacket = new ClientboundAddPlayerPacket(this);
+        sendPacket(addPlayerPacket);
+    }
+
+    public void updateBotForJoiningPlayers(Player player) {
+        Packet<?> playerInfoUpdatePacket = new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, this);
+
+        ((CraftPlayer) player).getHandle().connection.send(playerInfoUpdatePacket);
     }
 
     public void hide() {
@@ -59,9 +60,10 @@ public abstract class Bot extends ServerPlayer {
         sendPacket(destroyEntityPacket);
     }
 
-    public void show() {
-        Packet<?> addPlayerPacket = new ClientboundAddPlayerPacket(this);
-        sendPacket(addPlayerPacket);
+    public void hideForJoiningPlayers(Player player) {
+        Packet<?> destroyEntityPacket = new ClientboundRemoveEntitiesPacket(this.getId());
+
+        ((CraftPlayer) player).getHandle().connection.send(destroyEntityPacket);
     }
 
     public void destroy() {
@@ -71,20 +73,6 @@ public abstract class Bot extends ServerPlayer {
         this.velocity = null;
         this.initialLocation = null;
 
-    }
-
-    private void render(ServerGamePacketListenerImpl connection, Packet<?>[] packets) {
-        connection.send(packets[0]);
-        connection.send(packets[1]);
-        connection.send(packets[2]);
-    }
-
-    private Packet<?>[] getRenderPackets() {
-        return new Packet[] {
-                new ClientboundAddPlayerPacket(this),
-                new ClientboundSetEntityDataPacket(this.getId(), this.entityData.packDirty()),
-                new ClientboundRotateHeadPacket(this, (byte) ((this.yHeadRot * 256f) / 360f))
-        };
     }
 
     public void sendPacket(Packet<?> packet) {
