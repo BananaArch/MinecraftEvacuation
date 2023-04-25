@@ -4,7 +4,6 @@ import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
 import com.bananaarch.minecraftevacuation.bot.subclasses.*;
 import com.bananaarch.minecraftevacuation.utils.BotType;
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketSendListener;
 import net.minecraft.network.protocol.Packet;
@@ -73,7 +72,7 @@ public class BotFactory {
         nmsWorld.addNewPlayer(bot);
         bot.renderAll();
 
-        MinecraftEvacuation.getInstance().getManager().addBot(bot);
+        MinecraftEvacuation.getInstance().getBotManager().addBot(bot);
 
         return bot;
 

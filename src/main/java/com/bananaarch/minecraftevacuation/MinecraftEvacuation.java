@@ -1,10 +1,12 @@
 package com.bananaarch.minecraftevacuation;
 
 import com.bananaarch.minecraftevacuation.bot.BotManager;
+import com.bananaarch.minecraftevacuation.tasks.TaskManager;
 import com.bananaarch.minecraftevacuation.ux.listeners.BlockPlacedListener;
 import com.bananaarch.minecraftevacuation.ux.listeners.ConnectionListener;
 import com.bananaarch.minecraftevacuation.ux.listeners.GUIListener;
 import com.bananaarch.minecraftevacuation.ux.command.MenuCommand;
+import com.bananaarch.minecraftevacuation.ux.listeners.NPCInteractListener;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -18,28 +20,32 @@ import java.util.regex.Pattern;
 public final class MinecraftEvacuation extends JavaPlugin implements Listener {
 
     private static MinecraftEvacuation instance;
-    private BotManager manager;
+    private TaskManager taskManager;
+    private BotManager botManager;
 
     public static MinecraftEvacuation getInstance() {
         return instance;
     }
-    public BotManager getManager() {
-        return manager;
+    public TaskManager getTaskManager() {
+        return taskManager;
+    }
+    public BotManager getBotManager() {
+        return botManager;
     }
 
 
     @Override
     public void onEnable() {
 
-
-
         instance = this;
-        this.manager = new BotManager();
+        taskManager = new TaskManager();
+        botManager = new BotManager();
 
         Bukkit.getPluginManager().registerEvents(this, this);
         Bukkit.getPluginManager().registerEvents(new GUIListener(), this);
         Bukkit.getPluginManager().registerEvents(new BlockPlacedListener(), this);
         Bukkit.getPluginManager().registerEvents(new ConnectionListener(), this);
+        Bukkit.getPluginManager().registerEvents(new NPCInteractListener(), this);
         getCommand("menu").setExecutor(new MenuCommand());
 
 

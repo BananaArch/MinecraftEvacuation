@@ -1,5 +1,7 @@
 package com.bananaarch.minecraftevacuation.ux.listeners;
 
+import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
+import com.bananaarch.minecraftevacuation.tasks.TaskManager;
 import com.bananaarch.minecraftevacuation.ux.events.UniversalEntityInteractEvent;
 import io.netty.channel.*;
 import net.minecraft.network.Connection;
@@ -12,6 +14,9 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Field;
 
 public class PacketListener {
+
+
+    private final TaskManager taskManager = MinecraftEvacuation.getInstance().getTaskManager();
 
     public void inject(Player player) throws NoSuchFieldException, IllegalAccessException {
 
@@ -46,7 +51,7 @@ public class PacketListener {
                 int entityId = id.getInt(packet);
 
                 UniversalEntityInteractEvent event = new UniversalEntityInteractEvent(player, entityId);
-                Bukkit.getPluginManager().callEvent(event);
+                taskManager.runTask(() -> Bukkit.getPluginManager().callEvent(event));
 
                 if (!event.isCancelled())
                     super.channelRead(ctx, rawPacket);

@@ -10,7 +10,7 @@ import java.util.HashMap;
 public enum CustomGUI {
     MENU_GUI(
             27,
-            ChatColor.WHITE + "Menu",
+            ChatColor.YELLOW + "Menu",
             new HashMap<Integer, ItemStack>() {{
                 put(3, CustomItems.START_REPLAY.getItemStack());
                 put(4, CustomItems.START_TRAINING.getItemStack());
@@ -26,9 +26,9 @@ public enum CustomGUI {
     ),
     BOT_GUI(
             9,
-            ChatColor.WHITE + "Edit Bot",
+            ChatColor.YELLOW + "Edit Bot",
             new HashMap<Integer, ItemStack>() {{
-
+                put(8, CustomItems.EXIT_ITEM.getItemStack());
             }}
     );
 

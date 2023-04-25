@@ -2,6 +2,7 @@ package com.bananaarch.minecraftevacuation.ux.listeners;
 
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
 import com.bananaarch.minecraftevacuation.bot.BotManager;
+import com.bananaarch.minecraftevacuation.tasks.TaskManager;
 import org.bukkit.ChatColor;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -11,7 +12,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class ConnectionListener implements Listener {
 
     private final PacketListener packetListener = new PacketListener();
-    private final BotManager botManager = MinecraftEvacuation.getInstance().getManager();
+    private final TaskManager taskManager = MinecraftEvacuation.getInstance().getTaskManager();
+    private final BotManager botManager = MinecraftEvacuation.getInstance().getBotManager();
 
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {

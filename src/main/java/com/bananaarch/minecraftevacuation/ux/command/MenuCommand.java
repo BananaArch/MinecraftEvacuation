@@ -13,7 +13,7 @@ public class MenuCommand implements CommandExecutor {
 
         if (!(commandSender instanceof Player)) {
 
-            System.out.println("You must be a player to run the command, " + s);
+            System.out.println("You must be a player to run the command /" + s);
             return false;
 
         }

@@ -22,9 +22,9 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 
 public abstract class Bot extends ServerPlayer {
 
-    private final BukkitScheduler scheduler = Bukkit.getScheduler();
     private Vector velocity;
     private Location initialLocation;
+
 
 
     protected Bot(MinecraftServer minecraftserver, ServerLevel worldserver, GameProfile gameprofile, Location initialLocation) {
