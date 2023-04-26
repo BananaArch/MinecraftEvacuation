@@ -39,14 +39,14 @@ public enum CustomItems {
             true,
             Material.NETHER_STAR
     ),
-    SHOW_STUDENTS(
+    STUDENTS_SHOWN(
             "Visibility: Revealed",
             ChatColor.GREEN,
             "Click here to hide Student NPCs",
             false,
             Material.LIME_CANDLE
     ),
-    HIDE_STUDENTS(
+    STUDENTS_HIDDEN(
             "Visibility: Hidden",
             ChatColor.RED,
             "Click here to show Student NPCs",
@@ -66,13 +66,6 @@ public enum CustomItems {
             "Click to confirm that you want to " + ChatColor.RED + "DELETE ALL BOTS",
             true,
             Material.SCULK_SENSOR
-    ),
-    EXIT_ITEM(
-            "Exit",
-            ChatColor.DARK_RED,
-            "Click here to exit the GUI",
-            false,
-            Material.BARRIER
     ),
     FRESHMAN_ITEM(
             "Freshman",
@@ -108,6 +101,49 @@ public enum CustomItems {
             "Click here to get a Teacher block",
             true,
             Material.BEDROCK
+    ),
+    TARGET_BLOCK(
+            "Target",
+            ChatColor.RED,
+            "Click here to obtain a Target Initialization block",
+            true,
+            Material.TARGET
+    ),
+    BOT_INFO(
+            "Bot Info",
+            ChatColor.WHITE,
+            "",
+            true,
+            Material.ARMOR_STAND
+    ),
+    CHANGE_GENDER(
+            "Change Gender",
+            ChatColor.WHITE,
+            "Click here to change the gender",
+            false,
+            Material.LEVER
+    ),
+    GAMESTATE_SHOWN(
+            "Gamestate Visibility: True",
+            ChatColor.GREEN,
+            "Click here to make the visibility of the Gamestate false",
+            false,
+            Material.COMMAND_BLOCK_MINECART
+
+    ),
+    GAMESTATE_HIDDEN(
+            "Gamestate Visibilty: False",
+            ChatColor.RED,
+            "Click here to make the visibility of the Gamestate true",
+            false,
+            Material.HOPPER_MINECART
+    ),
+    EXIT_GUI(
+            "Exit",
+            ChatColor.RED,
+            "Click here to exit the GUI",
+            false,
+            Material.BARRIER
     );
 
 

@@ -6,6 +6,6 @@ public enum BotType {
     SOPHOMORE,
     JUNIOR,
     SENIOR,
-    TEACHER
+    TEACHER;
 
 }

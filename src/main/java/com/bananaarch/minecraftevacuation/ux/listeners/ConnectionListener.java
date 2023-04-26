@@ -11,7 +11,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class ConnectionListener implements Listener {
 
-    private final PacketListener packetListener = new PacketListener();
+    private final PacketListener packetListener = MinecraftEvacuation.getInstance().getPacketListener();
     private final TaskManager taskManager = MinecraftEvacuation.getInstance().getTaskManager();
     private final BotManager botManager = MinecraftEvacuation.getInstance().getBotManager();
 
@@ -22,13 +22,11 @@ public class ConnectionListener implements Listener {
         try {
             packetListener.inject(e.getPlayer());
         } catch (NoSuchFieldException exception) {
-            System.out.println("Error with packet listener");
             e.getPlayer().sendMessage(ChatColor.DARK_RED + "ERROR: Packet Listener throwing NoSuchFieldException");
-            throw new RuntimeException(exception);
+            throw new RuntimeException("Error with packet listener");
         } catch (IllegalAccessException exception) {
-            System.out.println("Error with packet listener");
             e.getPlayer().sendMessage(ChatColor.DARK_RED + "ERROR: Packet Listener throwing IllegalAccessException");
-            throw new RuntimeException(exception);
+            throw new RuntimeException("Error with packet listener");
         }
 
     }
@@ -37,12 +35,10 @@ public class ConnectionListener implements Listener {
     public void onQuit(PlayerQuitEvent e) {
         try {
             packetListener.stop(e.getPlayer());
-        } catch (NoSuchFieldException ex) {
-            System.out.println("Error with packet listener");
-            throw new RuntimeException(ex);
-        } catch (IllegalAccessException ex) {
-            System.out.println("Error with packet listener");
-            throw new RuntimeException(ex);
+        } catch (NoSuchFieldException exception) {
+            throw new RuntimeException("Error with packet listener");
+        } catch (IllegalAccessException exception) {
+            throw new RuntimeException("Error with packet listener");
         }
     }
 

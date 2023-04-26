@@ -15,6 +15,10 @@ public class BotManager {
     private final BotAgent botAgent = new BotAgent(this, MinecraftEvacuation.getInstance());
     private boolean isVisible;
 
+    public BotManager() {
+        this.isVisible = true;
+    }
+
     public void addBot(Bot bot) {
         bots.put(bot.getId(), bot);
     }

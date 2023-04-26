@@ -10,25 +10,28 @@ import java.util.HashMap;
 public enum CustomGUI {
     MENU_GUI(
             27,
-            ChatColor.YELLOW + "Menu",
+            ChatColor.DARK_GRAY + "Menu",
             new HashMap<Integer, ItemStack>() {{
-                put(3, CustomItems.START_REPLAY.getItemStack());
-                put(4, CustomItems.START_TRAINING.getItemStack());
-                put(5, CustomItems.SHOW_STUDENTS.getItemStack());
+                put(2, CustomItems.START_REPLAY.getItemStack());
+                put(3, CustomItems.START_TRAINING.getItemStack());
+                put(4, CustomItems.TARGET_BLOCK.getItemStack());
+                put(5, CustomItems.STUDENTS_SHOWN.getItemStack());
                 put(6, CustomItems.DESTROY_ALL_BOTS.getItemStack());
                 put(11, CustomItems.FRESHMAN_ITEM.getItemStack());
                 put(12, CustomItems.SOPHOMORE_ITEM.getItemStack());
                 put(13, CustomItems.JUNIOR_ITEM.getItemStack());
                 put(14, CustomItems.SENIOR_ITEM.getItemStack());
                 put(15, CustomItems.TEACHER_ITEM.getItemStack());
-                put(22, CustomItems.EXIT_ITEM.getItemStack());
+                put(22, CustomItems.EXIT_GUI.getItemStack());
             }}
     ),
     BOT_GUI(
             9,
-            ChatColor.YELLOW + "Edit Bot",
+            ChatColor.DARK_GRAY + "Edit Bot",
             new HashMap<Integer, ItemStack>() {{
-                put(8, CustomItems.EXIT_ITEM.getItemStack());
+                put(0, CustomItems.BOT_INFO.getItemStack());
+                put(1, CustomItems.CHANGE_GENDER.getItemStack());
+                put(8, CustomItems.EXIT_GUI.getItemStack());
             }}
     );
 

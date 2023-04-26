@@ -23,6 +23,8 @@ import java.util.UUID;
 
 public class BotFactory {
 
+    private static final BotManager botManager = MinecraftEvacuation.getInstance().getBotManager();
+
     public static Bot createBot(Location initialLocation, String name, BotType botType) {
 
         Bot bot;
@@ -34,21 +36,24 @@ public class BotFactory {
         boolean isMale = Math.random() < .5;
 
 //        --see type--
-
-        if (botType.equals(BotType.FRESHMAN)) {
-            bot = new Freshman(nmsServer, nmsWorld, gameProfile, initialLocation);
-        } else if (botType.equals(BotType.SOPHOMORE)) {
-            bot = new Sophomore(nmsServer, nmsWorld, gameProfile, initialLocation);
-        } else if (botType.equals(BotType.JUNIOR)) {
-            bot = new Junior(nmsServer, nmsWorld, gameProfile, initialLocation);
-        } else if (botType.equals(BotType.SENIOR)) {
-            bot = new Senior(nmsServer, nmsWorld, gameProfile, initialLocation);
-        } else if (botType.equals(BotType.TEACHER)) {
-            bot = new Teacher(nmsServer, nmsWorld, gameProfile, initialLocation);
-        } else {
-
-            System.out.println("Invalid bot type");
-            throw new IllegalArgumentException();
+        switch(botType) {
+            case FRESHMAN:
+                bot = new Freshman(nmsServer, nmsWorld, gameProfile, initialLocation);
+                break;
+            case SOPHOMORE:
+                bot = new Sophomore(nmsServer, nmsWorld, gameProfile, initialLocation);
+                break;
+            case JUNIOR:
+                bot = new Junior(nmsServer, nmsWorld, gameProfile, initialLocation);
+                break;
+            case SENIOR:
+                bot = new Senior(nmsServer, nmsWorld, gameProfile, initialLocation);
+                break;
+            case TEACHER:
+                bot = new Teacher(nmsServer, nmsWorld, gameProfile, initialLocation);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid BotType");
 
         }
 
@@ -72,7 +77,7 @@ public class BotFactory {
         nmsWorld.addNewPlayer(bot);
         bot.renderAll();
 
-        MinecraftEvacuation.getInstance().getBotManager().addBot(bot);
+        botManager.addBot(bot);
 
         return bot;
 

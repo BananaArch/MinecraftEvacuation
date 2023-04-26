@@ -2,7 +2,6 @@ package com.bananaarch.minecraftevacuation.ux.listeners;
 
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
 import com.bananaarch.minecraftevacuation.bot.BotManager;
-import com.bananaarch.minecraftevacuation.utils.BotType;
 import com.bananaarch.minecraftevacuation.utils.CustomItems;
 import com.bananaarch.minecraftevacuation.utils.CustomGUI;
 import org.bukkit.ChatColor;
@@ -24,36 +23,28 @@ public class GUIListener implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
 
+        Player player = (Player) e.getWhoClicked();
 
-        if (e.getCurrentItem() == null)
-            return;
+        CustomGUI customGUI = Arrays.stream(CustomGUI.values())
+                .filter(gui -> e.getInventory().equals(gui.getInventory()))
+                .findFirst()
+                .orElse(null);
 
-//        SETTINGS GUI
+        // check if GUI is custom
+        if (customGUI == null) return;
+        // makes sure item is in GUI (not inventory)
+        if (e.getClickedInventory().equals(e.getWhoClicked().getInventory())) return;
 
+        ItemStack currentItem = e.getCurrentItem();
 
+        CustomItems customItem = Arrays.stream(CustomItems.values())
+                        .filter(customItems -> customItems.getItemStack().isSimilar(currentItem))
+                        .findFirst()
+                        .orElse(null);
 
-        if (CustomGUI.values().st) {
-
-            e.setCancelled(true);
-
-//            if clicked in player's own inventory
-            if (e.getClickedInventory().equals(e.getWhoClicked().getInventory()))
-                return;
-
-            Player player = (Player) e.getWhoClicked();
-
-        }
-
-    }
-
-    private void handleAction(Player player, CustomItems clickedItem, CustomGUI gui) {
-
-        /*
-            If GUI is MENU GUI
-         */
-
-        if (gui.equals(CustomGUI.MENU_GUI))
-            switch (clickedItem) {
+        e.setCancelled(true);
+        if (customGUI.equals(CustomGUI.MENU_GUI))
+            switch (customItem) {
 
                 case START_REPLAY:
                     CustomGUI.MENU_GUI.setItem(3, CustomItems.STOP_REPLAY.getItemStack());
@@ -71,14 +62,14 @@ public class GUIListener implements Listener {
                     CustomGUI.MENU_GUI.setItem(4, CustomItems.START_TRAINING.getItemStack());
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                     break;
-                case SHOW_STUDENTS:
+                case STUDENTS_SHOWN:
                     botManager.hideAll();
-                    CustomGUI.MENU_GUI.setItem(5, CustomItems.HIDE_STUDENTS.getItemStack());
+                    CustomGUI.MENU_GUI.setItem(5, CustomItems.STUDENTS_HIDDEN.getItemStack());
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                     break;
-                case HIDE_STUDENTS:
+                case STUDENTS_HIDDEN:
                     botManager.showAll();
-                    CustomGUI.MENU_GUI.setItem(5, CustomItems.SHOW_STUDENTS.getItemStack());
+                    CustomGUI.MENU_GUI.setItem(5, CustomItems.STUDENTS_SHOWN.getItemStack());
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                     break;
                 case DESTROY_ALL_BOTS:
@@ -91,7 +82,7 @@ public class GUIListener implements Listener {
                     CustomGUI.MENU_GUI.setItem(6, CustomItems.DESTROY_ALL_BOTS.getItemStack());
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                     break;
-                case EXIT_ITEM:
+                case EXIT_GUI:
                     player.closeInventory();
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 0);
                     break;
@@ -115,19 +106,24 @@ public class GUIListener implements Listener {
                     player.getInventory().addItem(CustomItems.TEACHER_ITEM.getItemStack());
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 8);
                     break;
+                case TARGET_BLOCK:
+                    player.getInventory().addItem(CustomItems.TARGET_BLOCK.getItemStack());
+                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 0);
+                default: break;
             }
 
 
         /*
             If GUI is a BOT GUI
          */
-        if (gui.equals(CustomGUI.BOT_GUI))
-            switch(clickedItem) {
+        if (customGUI.equals(CustomGUI.BOT_GUI))
+            switch(customItem) {
 
-                case EXIT_ITEM:
+                case EXIT_GUI:
                     player.closeInventory();
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 8);
                     break;
+                default: break;
             }
 
     }

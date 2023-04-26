@@ -27,6 +27,8 @@ public class NPCInteractListener implements Listener {
             taskManager.runTask(() -> player.openInventory(CustomGUI.BOT_GUI.getInventory()));
             player.setMetadata("selectedBotId", new FixedMetadataValue(plugin, entityId)); // adds metadata to player making it easily accessible
 
+//            TODO: bot metadata shit
+
         }
 
     }
