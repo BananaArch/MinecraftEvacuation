@@ -20,11 +20,13 @@ import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
+import java.util.List;
+
 public abstract class Bot extends ServerPlayer {
 
     private Vector velocity;
-    private Location initialLocation;
-
+    protected Location initialLocation;
+    protected Location targetLocation;
 
 
     protected Bot(MinecraftServer minecraftserver, ServerLevel worldserver, GameProfile gameprofile, Location initialLocation) {
@@ -56,6 +58,9 @@ public abstract class Bot extends ServerPlayer {
     }
 
     public void hide() {
+
+//        TODO: fix bug with showing if chunks reloaded
+
         Packet<?> destroyEntityPacket = new ClientboundRemoveEntitiesPacket(this.getId());
         sendPacket(destroyEntityPacket);
     }
@@ -113,9 +118,12 @@ public abstract class Bot extends ServerPlayer {
 
     public void setSkin(String value, String signature) {
 
+        // TODO: update Skin w/ packets
+
         //  https://mineskin.org/
         //  value, signature
         getGameProfile().getProperties().put("textures", new Property("textures", value, signature));
+
     }
 
     public void addVelocity(Vector vector) {
@@ -148,5 +156,6 @@ public abstract class Bot extends ServerPlayer {
         return GameStateUtil.getGameState(getLocation());
     }
 
+    public abstract List<String> getInfo();
 
 }

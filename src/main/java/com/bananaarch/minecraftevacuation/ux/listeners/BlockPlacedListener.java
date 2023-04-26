@@ -60,7 +60,7 @@ public class BlockPlacedListener implements Listener {
             case TARGET_BLOCK:
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 0);
                 e.setCancelled(true);
-//                TODO: TARGET BLOCK
+//                TODO: TARGET BLOCK (do smth in BotAgetn not Bot)
                 break;
         }
 

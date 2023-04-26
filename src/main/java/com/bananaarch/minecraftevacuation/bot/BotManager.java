@@ -31,6 +31,10 @@ public class BotManager {
         return bots.containsKey(botId);
     }
 
+    public Bot getBot(int botId) {
+        return bots.get(botId);
+    }
+
     public BotAgent getBotAgent() {
         return botAgent;
     }
@@ -66,7 +70,7 @@ public class BotManager {
         return bots.size();
     }
 
-    public int destroyAll() {
+    public int deleteAll() {
         bots.values().forEach(Bot::destroy);
 
         int output = bots.size();
@@ -74,6 +78,14 @@ public class BotManager {
         System.out.println("Successfully destroyed " + output + " bots");
         return output;
 
-//        TODO: Delete serializable filen
+//        TODO: Delete serializable file
+    }
+
+    public void deleteBot(int botId) {
+        Bot bot = bots.get(botId);
+        bot.destroy();
+        bots.remove(botId);
+
+//        TODO: reserialize?
     }
 }

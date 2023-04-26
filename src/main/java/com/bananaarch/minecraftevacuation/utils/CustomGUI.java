@@ -29,17 +29,20 @@ public enum CustomGUI {
             9,
             ChatColor.DARK_GRAY + "Edit Bot",
             new HashMap<Integer, ItemStack>() {{
-                put(0, CustomItems.BOT_INFO.getItemStack());
+                put(0, CustomItems.BASE_BOT_INFO.getItemStack());
                 put(1, CustomItems.CHANGE_GENDER.getItemStack());
+                put(2, CustomItems.SHOW_GAMESTATE.getItemStack());
+                put(7, CustomItems.DELETE_BOT.getItemStack());
                 put(8, CustomItems.EXIT_GUI.getItemStack());
             }}
     );
 
     private Inventory inventory;
+    private String title;
 
-    CustomGUI(int size, String name, HashMap<Integer, ItemStack> itemSlot) {
+    CustomGUI(int size, String title, HashMap<Integer, ItemStack> itemSlot) {
 
-        Inventory inventory = Bukkit.createInventory(null, size, name);
+        Inventory inventory = Bukkit.createInventory(null, size, title);
 
         for (Integer key : itemSlot.keySet()) {
             ItemStack item = itemSlot.get(key);
@@ -48,6 +51,7 @@ public enum CustomGUI {
         }
 
         this.inventory = inventory;
+        this.title = title;
 
     }
 
@@ -56,5 +60,10 @@ public enum CustomGUI {
     public void setItem(int index, ItemStack item) {
         inventory.setItem(index, item);
     }
+
+    public String getTitle() {
+        return title;
+    }
+
 
 }

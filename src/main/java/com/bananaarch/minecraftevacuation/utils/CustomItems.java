@@ -58,7 +58,7 @@ public enum CustomItems {
             ChatColor.DARK_RED,
             "Click here to destroy all bots",
             false,
-            Material.TNT
+            Material.TNT_MINECART
     ),
     CONFIRM_DESTROY_ALL_BOTS(
             "THIS ACTION CANNOT BE UNDONE!",
@@ -109,10 +109,10 @@ public enum CustomItems {
             true,
             Material.TARGET
     ),
-    BOT_INFO(
+    BASE_BOT_INFO(
             "Bot Info",
             ChatColor.WHITE,
-            "",
+            ChatColor.DARK_RED.toString() + ChatColor.BOLD + "ERROR: Invalid Bot",
             true,
             Material.ARMOR_STAND
     ),
@@ -123,20 +123,20 @@ public enum CustomItems {
             false,
             Material.LEVER
     ),
-    GAMESTATE_SHOWN(
-            "Gamestate Visibility: True",
-            ChatColor.GREEN,
-            "Click here to make the visibility of the Gamestate false",
+    SHOW_GAMESTATE(
+            "Show Gamestate",
+            ChatColor.WHITE,
+            "Click here to show the Bot's gamestate for " + ChatColor.GREEN + "15 seconds",
             false,
             Material.COMMAND_BLOCK_MINECART
 
     ),
-    GAMESTATE_HIDDEN(
-            "Gamestate Visibilty: False",
-            ChatColor.RED,
-            "Click here to make the visibility of the Gamestate true",
+    DELETE_BOT(
+            "Delete bot",
+            ChatColor.DARK_RED,
+            "Click here to " + ChatColor.RED + "delete" + ChatColor.GRAY + " this bot",
             false,
-            Material.HOPPER_MINECART
+            Material.TNT_MINECART
     ),
     EXIT_GUI(
             "Exit",

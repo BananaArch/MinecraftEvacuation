@@ -6,9 +6,12 @@ import com.bananaarch.minecraftevacuation.utils.Gender;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Senior extends Bot implements Genderable {
@@ -31,6 +34,19 @@ public class Senior extends Bot implements Genderable {
         Gender[] values = Gender.values();
         Gender randomGender = values[(int) (values.length * Math.random())];
         setGender(randomGender);
+    }
+
+    @Override
+    public List<String> getInfo() {
+        return Arrays.asList(
+                ChatColor.GRAY + "Bot Type: " + ChatColor.WHITE + "Senior",
+                ChatColor.GRAY + "Gender: " + ChatColor.GREEN + gender.name().toUpperCase(),
+                ChatColor.GRAY + "Initial Location: " + ChatColor.GREEN + "(" +
+                        initialLocation.getX() + ", " +
+                        initialLocation.getY() + ", " +
+                        initialLocation.getZ() + ")",
+                ChatColor.GRAY + "Target Location: " + (targetLocation == null ? ChatColor.RED + "No target location found" : ChatColor.GREEN + targetLocation.toString())
+        );
     }
 
     @Override

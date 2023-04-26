@@ -1,9 +1,12 @@
 package com.bananaarch.minecraftevacuation.ux.listeners;
 
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
+import com.bananaarch.minecraftevacuation.bot.Bot;
 import com.bananaarch.minecraftevacuation.bot.BotManager;
+import com.bananaarch.minecraftevacuation.bot.Genderable;
 import com.bananaarch.minecraftevacuation.utils.CustomItems;
 import com.bananaarch.minecraftevacuation.utils.CustomGUI;
+import com.bananaarch.minecraftevacuation.utils.ItemStackUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -12,12 +15,16 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.metadata.MetadataValue;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 
 public class GUIListener implements Listener {
 
+    private final MinecraftEvacuation plugin = MinecraftEvacuation.getInstance();
     private final BotManager botManager = MinecraftEvacuation.getInstance().getBotManager();
 
     @EventHandler
@@ -26,7 +33,7 @@ public class GUIListener implements Listener {
         Player player = (Player) e.getWhoClicked();
 
         CustomGUI customGUI = Arrays.stream(CustomGUI.values())
-                .filter(gui -> e.getInventory().equals(gui.getInventory()))
+                .filter(gui -> e.getView().getTitle().equals(gui.getTitle())) // I REALLY HATE THIS WAY OF CHECKING GUI BUT NO ALTERNATIVES (InventoryHolder is discouraged)
                 .findFirst()
                 .orElse(null);
 
@@ -43,7 +50,7 @@ public class GUIListener implements Listener {
                         .orElse(null);
 
         e.setCancelled(true);
-        if (customGUI.equals(CustomGUI.MENU_GUI))
+        if (customGUI.equals(CustomGUI.MENU_GUI)) {
             switch (customItem) {
 
                 case START_REPLAY:
@@ -77,7 +84,7 @@ public class GUIListener implements Listener {
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                     break;
                 case CONFIRM_DESTROY_ALL_BOTS:
-                    int amountDestroyed = botManager.destroyAll();
+                    int amountDestroyed = botManager.deleteAll();
                     player.sendMessage(ChatColor.GRAY + "Successfully destroyed " + ChatColor.DARK_RED + amountDestroyed + " bots");
                     CustomGUI.MENU_GUI.setItem(6, CustomItems.DESTROY_ALL_BOTS.getItemStack());
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
@@ -109,22 +116,66 @@ public class GUIListener implements Listener {
                 case TARGET_BLOCK:
                     player.getInventory().addItem(CustomItems.TARGET_BLOCK.getItemStack());
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 0);
-                default: break;
+                    break;
+                default:
+                    break;
             }
-
+            return;
+        }
 
         /*
             If GUI is a BOT GUI
          */
-        if (customGUI.equals(CustomGUI.BOT_GUI))
+        if (customGUI.equals(CustomGUI.BOT_GUI)) {
+
+            List<MetadataValue> metadata = player.getMetadata("selectedBotId");
+
+            Optional<MetadataValue> botIdValue = metadata.stream()
+                    .filter(value -> value.getOwningPlugin().equals(plugin))
+                    .findFirst();
+
+            if (!botIdValue.isPresent()) return;
+
+            int botId = botIdValue.get().asInt();
+            Bot bot = botManager.getBot(botId);
+
             switch(customItem) {
 
+                case CHANGE_GENDER:
+                    try {
+                        Genderable genderable = (Genderable) bot;
+                        genderable.setGender(genderable.getGender().nextGender());
+                        player.sendMessage(ChatColor.GRAY + "You have updated the gender to " + ChatColor.GREEN + genderable.getGender().name());
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 8);
+
+                        // update BotInfo
+                        ItemStack baseBotInfo = CustomItems.BASE_BOT_INFO.getItemStack().clone();
+                        ItemStack botInfo = ItemStackUtil.setCustomLore(
+                                baseBotInfo,
+                                bot.getInfo() == null ? Arrays.asList(ChatColor.RED + "Cannot get bot information") : bot.getInfo()
+                        );
+                        e.getInventory().setItem(0, botInfo);
+                    } catch (ClassCastException exception) {
+                        player.sendMessage(ChatColor.DARK_RED + "You are not allowed to change the gender of a non-genderable class");
+                        throw new ClassCastException("You are not allowed to change gender of non-genderable class");
+                    }
+                    break;
+                case SHOW_GAMESTATE:
+                    // TODO: make gameState visible & change GameState into class not Util
+                    break;
+                case DELETE_BOT:
+                    botManager.deleteBot(botId);
+                    player.closeInventory();
+                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 0);
+                    break;
                 case EXIT_GUI:
                     player.closeInventory();
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 8);
                     break;
                 default: break;
             }
+            return;
+        }
 
     }
 
