@@ -2,7 +2,6 @@ package com.bananaarch.minecraftevacuation.bot;
 
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
 import com.bananaarch.minecraftevacuation.bot.subclasses.*;
-import com.bananaarch.minecraftevacuation.utils.BotType;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.network.Connection;
 import net.minecraft.network.PacketSendListener;
@@ -33,7 +32,6 @@ public class BotFactory {
         ServerLevel nmsWorld = nmsServer.getLevel(Level.OVERWORLD);
 
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), name.length() > 16 ? name.substring(0, 16) : name);
-        boolean isMale = Math.random() < .5;
 
 //        --see type--
         switch(botType) {

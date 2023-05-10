@@ -1,8 +1,8 @@
 package com.bananaarch.minecraftevacuation.bot;
 
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
+import com.bananaarch.minecraftevacuation.bot.MLAgent.BotAgent;
 import com.bananaarch.minecraftevacuation.tasks.TaskManager;
-import org.bukkit.entity.Player;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -12,7 +12,7 @@ public class BotManager {
 
     private final TaskManager taskManager = MinecraftEvacuation.getInstance().getTaskManager();
     private final ConcurrentHashMap<Integer, Bot> bots = new ConcurrentHashMap<>();
-    private final BotAgent botAgent = new BotAgent(this, MinecraftEvacuation.getInstance());
+    private final BotAgent botAgent = new BotAgent(this);
     private boolean isVisible;
 
     public BotManager() {
@@ -39,12 +39,6 @@ public class BotManager {
         return botAgent;
     }
 
-//    public void walk() {
-//        for (Bot bot : bots) {
-//            bot.walk(new Vector(1, 0, 1));
-//        }
-//    }
-
     public void hideAll() {
         this.isVisible = false;
         bots.values().forEach(Bot::hide);
@@ -55,15 +49,9 @@ public class BotManager {
         bots.values().forEach(Bot::show);
     }
 
-    public void updateBotsForJoiningPlayers(Player player) {
-        bots.values().forEach(b -> b.updateBotForJoiningPlayers(player));
+    public void updateVisibility() {
         if (!isVisible)
-            bots.values().forEach(b -> {
-
-                // for some reason doesn't hide unless you add scheduler
-                taskManager.runTask(() -> b.hideForJoiningPlayers(player));
-
-            });
+            bots.values().forEach(Bot::hide);
     }
 
     public int getSize() {

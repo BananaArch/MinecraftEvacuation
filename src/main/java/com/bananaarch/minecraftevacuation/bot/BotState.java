@@ -1,18 +1,24 @@
-package com.bananaarch.minecraftevacuation.utils;
+package com.bananaarch.minecraftevacuation.bot;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
-public class GameStateUtil {
+public class BotState {
 
     private static final int LENGTH = 15;
     private static final int WIDTH = 15;
     private static final int HEIGHT = 4;
+    private Bot bot;
 
-    public static INDArray getGameState(Location location) {
+    public BotState(Bot bot) {
+        this.bot = bot;
+    }
+
+    public INDArray getState() {
+
+        Location location = bot.getLocation();
 
         int[] shape = new int[]{LENGTH, WIDTH, HEIGHT};
 
@@ -80,5 +86,4 @@ public class GameStateUtil {
         return blockLocation.getBlock();
 
     }
-
 }

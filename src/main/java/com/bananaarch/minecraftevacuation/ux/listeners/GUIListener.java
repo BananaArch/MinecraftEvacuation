@@ -54,20 +54,26 @@ public class GUIListener implements Listener {
             switch (customItem) {
 
                 case START_REPLAY:
-                    CustomGUI.MENU_GUI.setItem(3, CustomItems.STOP_REPLAY.getItemStack());
+                    CustomGUI.MENU_GUI.setItem(2, CustomItems.STOP_REPLAY.getItemStack());
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                     break;
                 case STOP_REPLAY:
-                    CustomGUI.MENU_GUI.setItem(3, CustomItems.START_REPLAY.getItemStack());
+                    CustomGUI.MENU_GUI.setItem(2, CustomItems.START_REPLAY.getItemStack());
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                     break;
                 case START_TRAINING:
-                    CustomGUI.MENU_GUI.setItem(4, CustomItems.STOP_TRAINING.getItemStack());
+                    botManager.getBotAgent().setTrainStatus(true);
+                    CustomGUI.MENU_GUI.setItem(3, CustomItems.STOP_TRAINING.getItemStack());
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                     break;
                 case STOP_TRAINING:
-                    CustomGUI.MENU_GUI.setItem(4, CustomItems.START_TRAINING.getItemStack());
+                    botManager.getBotAgent().setTrainStatus(false);
+                    CustomGUI.MENU_GUI.setItem(3, CustomItems.START_TRAINING.getItemStack());
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
+                    break;
+                case TARGET_BLOCK:
+                    player.getInventory().addItem(CustomItems.TARGET_BLOCK.getItemStack());
+                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 0);
                     break;
                 case STUDENTS_SHOWN:
                     botManager.hideAll();
@@ -112,10 +118,6 @@ public class GUIListener implements Listener {
                 case TEACHER_ITEM:
                     player.getInventory().addItem(CustomItems.TEACHER_ITEM.getItemStack());
                     player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 8);
-                    break;
-                case TARGET_BLOCK:
-                    player.getInventory().addItem(CustomItems.TARGET_BLOCK.getItemStack());
-                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 0);
                     break;
                 default:
                     break;

@@ -34,6 +34,7 @@ public class UniversalEntityInteractEvent extends Event implements Cancellable {
         return HANDLERS;
     }
 
+    // DO NOT DELETE!!!
     public static HandlerList getHandlerList() {
         return HANDLERS;
     }

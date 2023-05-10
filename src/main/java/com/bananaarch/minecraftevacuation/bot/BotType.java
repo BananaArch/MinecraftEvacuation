@@ -1,4 +1,4 @@
-package com.bananaarch.minecraftevacuation.utils;
+package com.bananaarch.minecraftevacuation.bot;
 
 public enum BotType {
 

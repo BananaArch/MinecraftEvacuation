@@ -2,7 +2,7 @@ package com.bananaarch.minecraftevacuation.bot.subclasses;
 
 import com.bananaarch.minecraftevacuation.bot.Bot;
 import com.bananaarch.minecraftevacuation.bot.Genderable;
-import com.bananaarch.minecraftevacuation.utils.Gender;
+import com.bananaarch.minecraftevacuation.bot.Gender;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;

@@ -1,10 +1,8 @@
 package com.bananaarch.minecraftevacuation.ux.listeners;
 
 import com.bananaarch.minecraftevacuation.bot.BotFactory;
-import com.bananaarch.minecraftevacuation.utils.BotType;
-import com.bananaarch.minecraftevacuation.utils.CustomGUI;
+import com.bananaarch.minecraftevacuation.bot.BotType;
 import com.bananaarch.minecraftevacuation.utils.CustomItems;
-import net.minecraft.util.StringUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -25,8 +23,6 @@ public class BlockPlacedListener implements Listener {
         Player player = e.getPlayer();
         ItemStack itemInMainHand = e.getPlayer().getInventory().getItemInMainHand();
         Location blockPlacedLocation = e.getBlockPlaced().getLocation();
-
-//        TODO: SWITCH CASEIFY
 
         CustomItems customItem = Arrays.stream(CustomItems.values())
                 .filter(item -> itemInMainHand.isSimilar(item.getItemStack()))

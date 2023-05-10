@@ -1,6 +1,5 @@
 package com.bananaarch.minecraftevacuation.bot;
 
-import com.bananaarch.minecraftevacuation.utils.GameStateUtil;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import net.minecraft.network.protocol.Packet;
@@ -9,12 +8,13 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
@@ -58,17 +58,8 @@ public abstract class Bot extends ServerPlayer {
     }
 
     public void hide() {
-
-//        TODO: fix bug with showing if chunks reloaded
-
         Packet<?> destroyEntityPacket = new ClientboundRemoveEntitiesPacket(this.getId());
         sendPacket(destroyEntityPacket);
-    }
-
-    public void hideForJoiningPlayers(Player player) {
-        Packet<?> destroyEntityPacket = new ClientboundRemoveEntitiesPacket(this.getId());
-
-        ((CraftPlayer) player).getHandle().connection.send(destroyEntityPacket);
     }
 
     public void destroy() {
@@ -85,9 +76,24 @@ public abstract class Bot extends ServerPlayer {
     }
     
     public void tick() {
+        loadChunks();
         super.tick();
         this.move(MoverType.SELF, new Vec3(velocity.getX(), velocity.getY(), velocity.getZ()));
         baseTick();
+    }
+
+    public void loadChunks() {
+        Level world = getLevel();
+
+        for (int i = chunkPosition().x - 1; i <= chunkPosition().x + 1; i++) {
+            for (int j = chunkPosition().z - 1; j <= chunkPosition().z + 1; j++) {
+                LevelChunk chunk = world.getChunk(i, j);
+
+                if (!chunk.loaded)
+                    chunk.loaded = true;
+            }
+        }
+
     }
 
     public void walk(Vector velocity) {
@@ -150,10 +156,6 @@ public abstract class Bot extends ServerPlayer {
 
     public Location getLocation() {
         return getBukkitEntity().getLocation();
-    }
-
-    public INDArray getGameState() {
-        return GameStateUtil.getGameState(getLocation());
     }
 
     public abstract List<String> getInfo();

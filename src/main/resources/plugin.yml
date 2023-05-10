@@ -5,4 +5,4 @@ api-version: 1.19
 commands:
   menu:
     description: Opens the menu GUI for the MinecraftEvacuation plugin.
-    aliases: [menu, setting, settings, manager]
+    aliases: [menu, setting, settings, manager, evacuation, evac, e]

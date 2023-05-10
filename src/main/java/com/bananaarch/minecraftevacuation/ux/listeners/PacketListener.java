@@ -50,7 +50,9 @@ public class PacketListener {
                 id.setAccessible(true);
                 int entityId = id.getInt(packet);
 
+                System.out.println(entityId);
                 UniversalEntityInteractEvent event = new UniversalEntityInteractEvent(player, entityId);
+                taskManager.scheduleTask(() -> Bukkit.getPluginManager().callEvent(event), 2);
                 taskManager.runTask(() -> Bukkit.getPluginManager().callEvent(event));
 
                 if (!event.isCancelled())
