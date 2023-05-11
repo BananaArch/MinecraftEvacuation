@@ -44,22 +44,55 @@ public class BotAgent {
         }
     }
 
-    public void trainBot() {
-        Set<Bot> bots = botManager.getBots();
-
-        Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage("Training"));
-
-        bots.forEach(bot -> {
-
-            bot.setVelocity(new Vector(2 * Math.random() - 1, 0, 2 * Math.random() - 1).multiply(.05));
-
-        });
-    }
-
     private void tick() {
         Set<Bot> bots = botManager.getBots();
         botManager.updateVisibility();
         bots.forEach(Bot::tick);
+    }
+
+    public void trainBot() {
+        Set<Bot> bots = botManager.getBots();
+
+        bots.forEach(bot -> {
+            Vector vel = new Vector(2 * Math.random() - 1, 0, 2 * Math.random() - 1);
+            bot.setVelocity(vel.multiply(.05));
+
+            Movement movement = Movement.NORTH;
+
+            switch (movement) {
+                case NORTH:
+
+                    break;
+                case SOUTH:
+
+                    break;
+                case EAST:
+
+                    break;
+                case WEST:
+
+                    break;
+                default:
+                    break;
+            }
+        });
+
+    }
+
+    public int rewardFunction(Bot bot, Movement movement) {
+        /*
+        def reward_function(state, action, next_state, destination, walls):
+            if next_state == destination:
+                return 100
+            elif next_state in walls:
+                return -100
+            elif next_state in state_history:
+                return 0
+            else:
+                return -1
+         */
+
+        return -1;
     }
 
 }

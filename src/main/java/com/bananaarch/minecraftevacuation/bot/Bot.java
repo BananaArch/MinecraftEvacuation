@@ -20,13 +20,18 @@ import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 import org.nd4j.linalg.api.ndarray.INDArray;
 
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class Bot extends ServerPlayer {
 
     private Vector velocity;
     protected Location initialLocation;
     protected Location targetLocation;
+    private Set<Location> pastLocations;
 
 
     protected Bot(MinecraftServer minecraftserver, ServerLevel worldserver, GameProfile gameprofile, Location initialLocation) {
@@ -34,6 +39,7 @@ public abstract class Bot extends ServerPlayer {
 
         this.initialLocation = initialLocation;
         this.velocity = new Vector(0, 0, 0);
+        this.pastLocations = new HashSet<>();
     }
 
     public void renderAll() {
@@ -49,12 +55,6 @@ public abstract class Bot extends ServerPlayer {
     public void show() {
         Packet<?> addPlayerPacket = new ClientboundAddPlayerPacket(this);
         sendPacket(addPlayerPacket);
-    }
-
-    public void updateBotForJoiningPlayers(Player player) {
-        Packet<?> playerInfoUpdatePacket = new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, this);
-
-        ((CraftPlayer) player).getHandle().connection.send(playerInfoUpdatePacket);
     }
 
     public void hide() {
@@ -80,6 +80,7 @@ public abstract class Bot extends ServerPlayer {
         super.tick();
         this.move(MoverType.SELF, new Vec3(velocity.getX(), velocity.getY(), velocity.getZ()));
         baseTick();
+        pastLocations.add(getFlooredLocation());
     }
 
     public void loadChunks() {
@@ -129,7 +130,6 @@ public abstract class Bot extends ServerPlayer {
         //  https://mineskin.org/
         //  value, signature
         getGameProfile().getProperties().put("textures", new Property("textures", value, signature));
-
     }
 
     public void addVelocity(Vector vector) {
@@ -156,6 +156,16 @@ public abstract class Bot extends ServerPlayer {
 
     public Location getLocation() {
         return getBukkitEntity().getLocation();
+    }
+
+    public Location getFlooredLocation() {
+
+        Location location = getBukkitEntity().getLocation();
+        location.setX(Math.floor(location.getX()));
+        location.setY(Math.floor(location.getY()));
+        location.setZ(Math.floor(location.getZ()));
+        return location;
+
     }
 
     public abstract List<String> getInfo();
