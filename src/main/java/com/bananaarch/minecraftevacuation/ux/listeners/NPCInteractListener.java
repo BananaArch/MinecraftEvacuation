@@ -4,10 +4,10 @@ import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
 import com.bananaarch.minecraftevacuation.bot.Bot;
 import com.bananaarch.minecraftevacuation.bot.BotManager;
 import com.bananaarch.minecraftevacuation.tasks.TaskManager;
-import com.bananaarch.minecraftevacuation.utils.CustomGUI;
-import com.bananaarch.minecraftevacuation.utils.CustomItems;
-import com.bananaarch.minecraftevacuation.utils.InventoryUtil;
-import com.bananaarch.minecraftevacuation.utils.ItemStackUtil;
+import com.bananaarch.minecraftevacuation.ux.utils.CustomGUI;
+import com.bananaarch.minecraftevacuation.ux.utils.CustomItems;
+import com.bananaarch.minecraftevacuation.ux.utils.InventoryUtil;
+import com.bananaarch.minecraftevacuation.ux.utils.ItemStackUtil;
 import com.bananaarch.minecraftevacuation.ux.events.UniversalEntityInteractEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -17,9 +17,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class NPCInteractListener implements Listener {
 

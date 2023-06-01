@@ -2,7 +2,7 @@ package com.bananaarch.minecraftevacuation.ux.listeners;
 
 import com.bananaarch.minecraftevacuation.bot.BotFactory;
 import com.bananaarch.minecraftevacuation.bot.BotType;
-import com.bananaarch.minecraftevacuation.utils.CustomItems;
+import com.bananaarch.minecraftevacuation.ux.utils.CustomItems;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;

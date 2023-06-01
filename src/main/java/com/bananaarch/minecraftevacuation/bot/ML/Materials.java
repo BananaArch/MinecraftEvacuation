@@ -1,4 +1,4 @@
-package com.bananaarch.minecraftevacuation.bot.MLAgent;
+package com.bananaarch.minecraftevacuation.bot.ML;
 
 import org.bukkit.Material;
 

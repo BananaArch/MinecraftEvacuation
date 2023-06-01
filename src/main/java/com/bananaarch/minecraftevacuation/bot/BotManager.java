@@ -1,8 +1,9 @@
 package com.bananaarch.minecraftevacuation.bot;
 
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
-import com.bananaarch.minecraftevacuation.bot.MLAgent.BotAgent;
+import com.bananaarch.minecraftevacuation.bot.ML.BotAgent;
 import com.bananaarch.minecraftevacuation.tasks.TaskManager;
+import org.bukkit.Location;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -10,7 +11,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class BotManager {
 
-    private final TaskManager taskManager = MinecraftEvacuation.getInstance().getTaskManager();
     private final ConcurrentHashMap<Integer, Bot> bots = new ConcurrentHashMap<>();
     private final BotAgent botAgent = new BotAgent(this);
     private boolean isVisible;
@@ -37,6 +37,10 @@ public class BotManager {
 
     public BotAgent getBotAgent() {
         return botAgent;
+    }
+
+    public void setBotsTargetLocation(Location targetLocation) {
+        bots.values().forEach(b -> b.setTargetLocation(targetLocation));
     }
 
     public void hideAll() {
@@ -66,7 +70,7 @@ public class BotManager {
         System.out.println("Successfully destroyed " + output + " bots");
         return output;
 
-//        TODO: Delete serializable file
+            //TODO: Delete serializable file
     }
 
     public void deleteBot(int botId) {
@@ -74,6 +78,10 @@ public class BotManager {
         bot.destroy();
         bots.remove(botId);
 
-//        TODO: reserialize?
+        //TODO: reserialize?
+    }
+
+    public void resetLocation() {
+        bots.values().forEach(Bot::resetLocation);
     }
 }

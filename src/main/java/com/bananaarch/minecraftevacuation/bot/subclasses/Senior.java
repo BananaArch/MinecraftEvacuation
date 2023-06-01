@@ -38,6 +38,10 @@ public class Senior extends Bot implements Genderable {
 
     @Override
     public List<String> getInfo() {
+
+        Location initialLocation = getInitialLocation();
+        Location targetLocation = getTargetLocation();
+
         return Arrays.asList(
                 ChatColor.GRAY + "Bot Type: " + ChatColor.WHITE + "Senior",
                 ChatColor.GRAY + "Gender: " + ChatColor.GREEN + gender.name().toUpperCase(),

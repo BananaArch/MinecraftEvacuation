@@ -1,7 +1,5 @@
-package com.bananaarch.minecraftevacuation.utils;
+package com.bananaarch.minecraftevacuation.ux.utils;
 
-import org.bukkit.entity.ChestedHorse;
-import org.bukkit.entity.Donkey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 

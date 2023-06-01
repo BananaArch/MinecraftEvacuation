@@ -48,5 +48,9 @@ public class TaskManager {
         tasks.clear();
     }
 
+    public boolean hasTask(int id) {
+        return tasks.containsKey(id);
+    }
+
 
 }
