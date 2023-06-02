@@ -2,18 +2,11 @@ package com.bananaarch.minecraftevacuation;
 
 import com.bananaarch.minecraftevacuation.bot.BotManager;
 import com.bananaarch.minecraftevacuation.tasks.TaskManager;
-import com.bananaarch.minecraftevacuation.ux.listeners.*;
-import com.bananaarch.minecraftevacuation.ux.command.MenuCommand;
-import net.md_5.bungee.api.ChatColor;
-import net.minecraft.server.packs.repository.Pack;
+import com.bananaarch.minecraftevacuation.interactions.listeners.*;
+import com.bananaarch.minecraftevacuation.interactions.command.MenuCommand;
 import org.bukkit.Bukkit;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public final class MinecraftEvacuation extends JavaPlugin implements Listener {
 
@@ -53,10 +46,10 @@ public final class MinecraftEvacuation extends JavaPlugin implements Listener {
         System.out.println("Minecraft School Evacuation by Kyle Shibao & Faith Kim");
     }
 
-    @Override
-    public void onDisable() {
-        taskManager.cancelAllTasks();
-        botManager.deleteAll();
-    }
+//    @Override
+//    public void onDisable() {
+//        taskManager.cancelAllTasks();
+//        botManager.deleteAll();
+//    }
 
 }

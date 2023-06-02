@@ -1,4 +1,4 @@
-package com.bananaarch.minecraftevacuation.ux.listeners;
+package com.bananaarch.minecraftevacuation.interactions.listeners;
 
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
 import com.bananaarch.minecraftevacuation.bot.BotManager;

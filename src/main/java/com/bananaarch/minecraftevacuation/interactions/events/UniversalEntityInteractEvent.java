@@ -1,8 +1,5 @@
-package com.bananaarch.minecraftevacuation.ux.events;
+package com.bananaarch.minecraftevacuation.interactions.events;
 
-import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
-import com.bananaarch.minecraftevacuation.tasks.TaskManager;
-import jdk.internal.org.jline.utils.ShutdownHooks;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;

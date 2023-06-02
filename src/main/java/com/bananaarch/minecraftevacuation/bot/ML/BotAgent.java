@@ -7,7 +7,6 @@ import com.bananaarch.minecraftevacuation.bot.ML.NN.Action;
 import com.bananaarch.minecraftevacuation.bot.ML.NN.BotState;
 import com.bananaarch.minecraftevacuation.bot.ML.NN.Environment;
 import com.bananaarch.minecraftevacuation.tasks.TaskManager;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -45,13 +44,14 @@ public class BotAgent {
     }
 
     // enable training, trainTaskId
-    public void setTrainStatus(boolean enabled) {
-
-        if (enabled) {
-            trainBot();
-        } else {
-            taskManager.cancelTask(trainTaskId);
+    public void stopTraining() {
+        if (!getTrainStatus()) {
+            ChatUtil.broadcastError("The bot is currently not training");
+            return;
         }
+
+        ChatUtil.broadcastMessage(ChatColor.RED + "Stopping the " + ChatColor.DARK_RED + "training" + ChatColor.RED + " process");
+        taskManager.cancelTask(trainTaskId);
     }
 
     public boolean getTrainStatus() {
@@ -67,79 +67,81 @@ public class BotAgent {
     public void trainBot() {
         Set<Bot> bots = botManager.getBots();
 
+        Bot bot = bots.iterator().next();
+
+        if (bot == null) {
+            ChatUtil.broadcastError("There are no bots");
+            return;
+        }
+        if (bot.getTargetLocation() == null) {
+            ChatUtil.broadcastError("Target location has not been initialized");
+            return;
+        }
+
         final String randomNetworkName = "network-" + System.currentTimeMillis() + ".zip";
 
-        this.trainTaskId =
-            taskManager.scheduleRepeatingTask(
-                () -> {
+        this.trainTaskId = taskManager.runTask(() -> {
 
-                    bots.forEach(bot -> {
-                        Vector vel = new Vector(2 * Math.random() - 1, 0, 2 * Math.random() - 1);
-                        bot.setVelocity(vel.multiply(.05));
+            ChatUtil.broadcastMessage(ChatColor.GRAY + "Starting the " + ChatColor.GREEN + "training" + ChatColor.GRAY + " process");
 
-                        final Environment mdp = new Environment(bot);
-                        final QLearningDiscreteDense<BotState> dql = new QLearningDiscreteDense<>(
-                                mdp,
-                                NetworkUtil.buildDQNFactory(),
-                                NetworkUtil.buildConfig()
-                        );
-
-                        dql.train();
-                        mdp.close();
-
-                        try {
-                            dql.getNeuralNet().save(randomNetworkName);
-                        } catch (IOException e) {
-                            throw new RuntimeException("Error with NN saving");
-                        }
-
-                    });
-
-
-                }, 0, 1
+            final Environment mdp = new Environment(bot);
+            QLearningDiscreteDense dql = new QLearningDiscreteDense<>(
+                    mdp,
+                    NetworkUtil.buildDQNFactory(),
+                    NetworkUtil.buildConfig()
             );
 
-        setTrainStatus(false);
+            dql.train();
+            mdp.close();
+
+            try {
+                dql.getNeuralNet().save(randomNetworkName);
+            } catch (IOException e) {
+                ChatUtil.broadcastError("Error with Neural Network saving.");
+                throw new RuntimeException("Error with NN saving");
+            }
+
+            bot.resetLocation();
+            evaluateNetwork(bot, randomNetworkName);
+
+            ChatUtil.broadcastMessage(ChatColor.GRAY + "Successfully finished the " + ChatColor.GREEN + "training" + ChatColor.GRAY + " process");
+            taskManager.cancelTask(trainTaskId);
+
+        });
 
     }
 
     private void evaluateNetwork(Bot bot, String randomNetworkName) {
         final MultiLayerNetwork multiLayerNetwork = NetworkUtil.loadNetwork(randomNetworkName);
-        final int EPOCHS = 30;
 
-        for (int i = 0; i < EPOCHS; i++) {
-            while(getTrainStatus()) {
-                try {
-                    BotState botState = new BotState(bot.getState());
-                    INDArray output = multiLayerNetwork.output(botState.getMatrix(), false);
-                    double[] data = output.data().asDouble();
-                    //TODO: DELETE LATER
-                    if (data.length != Action.values().length)
-                        throw new Exception();
+        while(!bot.standingOnTargetBlock()) {
+            try {
+                BotState botState = new BotState(bot.getState());
+                INDArray output = multiLayerNetwork.output(botState.getMatrix(), false);
+                double[] data = output.data().asDouble();
+                //TODO: DELETE LATER
+//                    if (data.length != Action.values().length)
+//                        throw new Exception();
 
-                    int maxValueIndex = NetworkUtil.getMaxValueIndex(data);
+                int maxValueIndex = NetworkUtil.getMaxValueIndex(data);
 
-                    Action action = Action.getActionByIndex(maxValueIndex);
-                    Location newLocation = bot.getLocation().add(action.getVector());
+                Action action = Action.getActionByIndex(maxValueIndex);
+                Location newLocation = bot.getLocation().add(action.getVector());
 
-                    bot.teleportTo(newLocation.getX(), newLocation.getY(), newLocation.getZ());
+                bot.teleportTo(newLocation.getX(), newLocation.getY(), newLocation.getZ());
 
 //                    bot.walk(Action.getActionByIndex(maxValueIndex).getVector());
-                    //TODO: might need to change walk method and create walkNorth, walkSouth, jumpNorth, etc. methods
+                //TODO: might need to change walk method and create walkNorth, walkSouth, jumpNorth, etc. methods
 
-                    //TODO: maybe wait?
-                } catch (Exception e) {
-                    System.out.println("Training has stopped");
-                    ChatUtil.broadcastError("Training has stopped. Error has occurred during training");
-                    setTrainStatus(false);
-                    return;
-                }
+                //TODO: maybe add wait to see more clearly?
+            } catch (Exception e) {
+                System.out.println(e);
+                ChatUtil.broadcastError("Error with evaluating the network.");
+                ChatUtil.broadcastError(e.toString());
+                return;
             }
-
-            // reset the bot
-            bot.resetLocation();
-
         }
+
     }
 
     public int rewardFunction(Bot bot, Action movement) {
@@ -151,10 +153,10 @@ public class BotAgent {
         if (botLocation.equals(targetLocation.add(new Vector(0, 1, 0)))) // if reached target Destination
             return 100;
         if (bot.containsInPastLocations(botLocation)) // if already passed
-            return -5;
+            return -1;
         if (!Materials.AIR.contains(blockMaterial)) // if wall
-            return -100;
-        return -1;
+            return -25;
+        return 1;
     }
 
 }

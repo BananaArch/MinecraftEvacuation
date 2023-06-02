@@ -50,7 +50,10 @@ public class Sophomore extends Bot implements Genderable {
                         initialLocation.getX() + ", " +
                         initialLocation.getY() + ", " +
                         initialLocation.getZ() + ")",
-                ChatColor.GRAY + "Target Location: " + (targetLocation == null ? ChatColor.RED + "No target location found" : ChatColor.GREEN + targetLocation.toString())
+                ChatColor.GRAY + "Target Location: " + (targetLocation == null ? ChatColor.RED + "No target location found" : ChatColor.GREEN + "(" +
+                        targetLocation.getX() + ", " +
+                        targetLocation.getY() + ", " +
+                        targetLocation.getZ() + ")")
         );
     }
 

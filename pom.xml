@@ -100,9 +100,19 @@
         </dependency>
         <dependency>
             <groupId>org.nd4j</groupId>
-            <artifactId>nd4j-native</artifactId>
+            <artifactId>nd4j-backends</artifactId>
             <version>1.0.0-M2.1</version>
-            <scope>test</scope>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.nd4j</groupId>
+            <artifactId>nd4j-native-platform</artifactId>
+            <version>1.0.0-M2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.nd4j</groupId>
+            <artifactId>nd4j-cuda-11.4-platform</artifactId>
+            <version>1.0.0-M2.1</version>
         </dependency>
         <dependency>
             <groupId>org.deeplearning4j</groupId>
@@ -111,8 +121,29 @@
         </dependency>
         <dependency>
             <groupId>org.deeplearning4j</groupId>
-            <artifactId>rl4j-core</artifactId>
-            <version>1.0.0-beta7</version>
+            <artifactId>deeplearning4j-nn</artifactId>
+            <version>1.0.0-M2.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>rl4j</artifactId>
+            <version>1.0.0-M1.1</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>rl4j-core</artifactId>
+            <version>1.0.0-M1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.deeplearning4j</groupId>
+            <artifactId>rl4j-api</artifactId>
+            <version>1.0.0-M1.1</version>
+        </dependency>
+
+
+
+
     </dependencies>
 </project>

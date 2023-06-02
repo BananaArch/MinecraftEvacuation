@@ -30,7 +30,7 @@ public class Environment implements MDP<BotState, Integer, DiscreteSpace> {
 
     @Override
     public DiscreteSpace getActionSpace() {
-        return null;
+        return this.actionSpace;
     }
 
     @Override

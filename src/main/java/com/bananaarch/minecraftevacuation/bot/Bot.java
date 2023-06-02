@@ -15,19 +15,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.factory.Nd4j;
 
-import java.lang.reflect.UndeclaredThrowableException;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class Bot extends ServerPlayer {
 
@@ -35,15 +31,20 @@ public abstract class Bot extends ServerPlayer {
     private Location initialLocation;
     private Location targetLocation;
     private Set<Location> pastLocations;
+//    private Environment mdp;
+    private static final int OBSERVATION_LENGTH = 15;
+    private static final int OBSERVATION_WIDTH = 15;
+    private static final int OBSERVATION_HEIGHT = 4;
 
 
     protected Bot(MinecraftServer minecraftserver, ServerLevel worldserver, GameProfile gameprofile, Location initialLocation) {
         super(minecraftserver, worldserver, gameprofile);
 
         this.initialLocation = initialLocation;
-        this.targetLocation = initialLocation;
+        this.targetLocation = null;
         this.velocity = new Vector(0, 0, 0);
         this.pastLocations = new HashSet<>();
+//        this.mdp = new Environment(this);
     }
 
     public void renderAll() {
@@ -208,37 +209,40 @@ public abstract class Bot extends ServerPlayer {
 
     }
 
+    public static int getObservationSize() {
+        return OBSERVATION_LENGTH * OBSERVATION_HEIGHT * OBSERVATION_WIDTH + 6;
+//        6 comes from targetLocation x, y, z in world and playerLocation x, y, z in world
+    }
+
     public INDArray getState() {
 
-        final int LENGTH = 15;
-        final int WIDTH = 15;
-        final int HEIGHT = 4;
+
 
         Location location = getLocation();
 
-        int[] shape = new int[]{LENGTH, WIDTH, HEIGHT};
+        int[] shape = new int[]{OBSERVATION_LENGTH, OBSERVATION_WIDTH, OBSERVATION_HEIGHT};
 
         INDArray gameState = Nd4j.create(shape);
 
-        int startingLengthIndex = LENGTH % 2 != 0 ? Math.floorDiv(LENGTH, 2) : LENGTH / 2 - 1;
-        int startingWidthIndex = WIDTH % 2 != 0 ? Math.floorDiv(WIDTH, 2) : WIDTH / 2 - 1;
-        int startingHeightIndex = HEIGHT % 2 != 0 ? Math.floorDiv(HEIGHT, 2) : HEIGHT / 2 - 1;
+        int startingLengthIndex = OBSERVATION_LENGTH % 2 != 0 ? Math.floorDiv(OBSERVATION_LENGTH, 2) : OBSERVATION_LENGTH / 2 - 1;
+        int startingWidthIndex = OBSERVATION_WIDTH % 2 != 0 ? Math.floorDiv(OBSERVATION_WIDTH, 2) : OBSERVATION_WIDTH / 2 - 1;
+        int startingHeightIndex = OBSERVATION_HEIGHT % 2 != 0 ? Math.floorDiv(OBSERVATION_HEIGHT, 2) : OBSERVATION_HEIGHT / 2 - 1;
 
         for (
                 int i = -startingLengthIndex;
-                i <= Math.floorDiv(LENGTH, 2);
+                i <= Math.floorDiv(OBSERVATION_LENGTH, 2);
                 i++
         ) {
 
             for (
                     int j = -startingWidthIndex;
-                    j <= Math.floorDiv(WIDTH, 2);
+                    j <= Math.floorDiv(OBSERVATION_WIDTH, 2);
                     j++
             ) {
 
                 for (
                         int k = -startingHeightIndex;
-                        k <= Math.floorDiv(HEIGHT, 2);
+                        k <= Math.floorDiv(OBSERVATION_HEIGHT, 2);
                         k++
                 ) {
 
@@ -270,12 +274,12 @@ public abstract class Bot extends ServerPlayer {
 
         INDArray arrayState = Nd4j.toFlattened(gameState);
 
-//        position of player in world
+//        position of targetLocation in world
         arrayState.add(targetLocation.getX());
         arrayState.add(targetLocation.getY());
         arrayState.add(targetLocation.getZ());
 
-//        position of target location in world
+//        position of player in world
         arrayState.add(location.getX());
         arrayState.add(location.getY());
         arrayState.add(location.getZ());
@@ -283,6 +287,14 @@ public abstract class Bot extends ServerPlayer {
         return arrayState;
 
     }
+
+//    public Environment getMdp() {
+//        return mdp;
+//    }
+//
+//    public void closeEnvironment() {
+//        this.mdp.close();
+//    }
 
     private Block getBlockAtLocation(Location location, int deltaX, int deltaY, int deltaZ) {
 

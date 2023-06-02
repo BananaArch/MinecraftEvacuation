@@ -5,16 +5,16 @@ import org.bukkit.ChatColor;
 
 public class ChatUtil {
 
-    public static void broadcastMessage(String message, String distinctMessage) {
+    public static void broadcastMessage(String message) {
         Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(
                 ChatColor.BLUE + "[NN] " +
-                ChatColor.GRAY + message
+                message
                 ));
     }
 
     public static void broadcastError(String error) {
         Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(
-                ChatColor.RED+ "[NN] " +
+                ChatColor.YELLOW + "[NN | Error] " +
                 ChatColor.DARK_RED + error)
         );
     }

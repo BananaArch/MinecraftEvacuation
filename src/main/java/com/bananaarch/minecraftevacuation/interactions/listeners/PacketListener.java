@@ -1,8 +1,8 @@
-package com.bananaarch.minecraftevacuation.ux.listeners;
+package com.bananaarch.minecraftevacuation.interactions.listeners;
 
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
 import com.bananaarch.minecraftevacuation.tasks.TaskManager;
-import com.bananaarch.minecraftevacuation.ux.events.UniversalEntityInteractEvent;
+import com.bananaarch.minecraftevacuation.interactions.events.UniversalEntityInteractEvent;
 import io.netty.channel.*;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.game.ServerboundInteractPacket;

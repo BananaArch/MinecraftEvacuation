@@ -1,4 +1,4 @@
-package com.bananaarch.minecraftevacuation.ux.utils;
+package com.bananaarch.minecraftevacuation.interactions.utils;
 
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;

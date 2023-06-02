@@ -1,8 +1,10 @@
-package com.bananaarch.minecraftevacuation.ux.listeners;
+package com.bananaarch.minecraftevacuation.interactions.listeners;
 
+import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
 import com.bananaarch.minecraftevacuation.bot.BotFactory;
+import com.bananaarch.minecraftevacuation.bot.BotManager;
 import com.bananaarch.minecraftevacuation.bot.BotType;
-import com.bananaarch.minecraftevacuation.ux.utils.CustomItems;
+import com.bananaarch.minecraftevacuation.interactions.utils.CustomItems;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -16,6 +18,8 @@ import org.bukkit.util.Vector;
 import java.util.Arrays;
 
 public class BlockPlacedListener implements Listener {
+
+    private final BotManager botManager = MinecraftEvacuation.getInstance().getBotManager();
 
     @EventHandler
     public void onBlockPlaceEvent(BlockPlaceEvent e) {
@@ -54,9 +58,10 @@ public class BlockPlacedListener implements Listener {
                 e.setCancelled(true);
                 break;
             case TARGET_BLOCK:
+                botManager.setBotsTargetLocation(blockPlacedLocation);
+                player.sendMessage(ChatColor.GRAY + "Successfully set a " + ChatColor.GREEN + "Target");
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 0);
                 e.setCancelled(true);
-//                TODO: TARGET BLOCK (do smth in BotAgetn not Bot)
                 break;
         }
 

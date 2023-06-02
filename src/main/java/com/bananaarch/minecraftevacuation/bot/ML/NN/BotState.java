@@ -29,7 +29,7 @@ public class BotState implements Encodable {
 
     @Override
     public Encodable dup() {
-        return null;
+        return new BotState(this.indArray.dup());
     }
 
     public INDArray getMatrix() {

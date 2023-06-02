@@ -1,14 +1,14 @@
-package com.bananaarch.minecraftevacuation.ux.listeners;
+package com.bananaarch.minecraftevacuation.interactions.listeners;
 
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
 import com.bananaarch.minecraftevacuation.bot.Bot;
 import com.bananaarch.minecraftevacuation.bot.BotManager;
 import com.bananaarch.minecraftevacuation.tasks.TaskManager;
-import com.bananaarch.minecraftevacuation.ux.utils.CustomGUI;
-import com.bananaarch.minecraftevacuation.ux.utils.CustomItems;
-import com.bananaarch.minecraftevacuation.ux.utils.InventoryUtil;
-import com.bananaarch.minecraftevacuation.ux.utils.ItemStackUtil;
-import com.bananaarch.minecraftevacuation.ux.events.UniversalEntityInteractEvent;
+import com.bananaarch.minecraftevacuation.interactions.utils.CustomGUI;
+import com.bananaarch.minecraftevacuation.interactions.utils.CustomItems;
+import com.bananaarch.minecraftevacuation.interactions.utils.InventoryUtil;
+import com.bananaarch.minecraftevacuation.interactions.utils.ItemStackUtil;
+import com.bananaarch.minecraftevacuation.interactions.events.UniversalEntityInteractEvent;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

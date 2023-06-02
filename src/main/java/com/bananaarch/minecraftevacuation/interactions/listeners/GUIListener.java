@@ -1,12 +1,13 @@
-package com.bananaarch.minecraftevacuation.ux.listeners;
+package com.bananaarch.minecraftevacuation.interactions.listeners;
 
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
 import com.bananaarch.minecraftevacuation.bot.Bot;
 import com.bananaarch.minecraftevacuation.bot.BotManager;
 import com.bananaarch.minecraftevacuation.bot.Genderable;
-import com.bananaarch.minecraftevacuation.ux.utils.CustomItems;
-import com.bananaarch.minecraftevacuation.ux.utils.CustomGUI;
-import com.bananaarch.minecraftevacuation.ux.utils.ItemStackUtil;
+import com.bananaarch.minecraftevacuation.bot.ML.BotAgent;
+import com.bananaarch.minecraftevacuation.interactions.utils.CustomItems;
+import com.bananaarch.minecraftevacuation.interactions.utils.CustomGUI;
+import com.bananaarch.minecraftevacuation.interactions.utils.ItemStackUtil;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -16,6 +17,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
+import org.nd4j.linalg.api.ops.impl.reduce.same.Min;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +28,7 @@ public class GUIListener implements Listener {
 
     private final MinecraftEvacuation plugin = MinecraftEvacuation.getInstance();
     private final BotManager botManager = MinecraftEvacuation.getInstance().getBotManager();
+    private final BotAgent botAgent = MinecraftEvacuation.getInstance().getBotManager().getBotAgent();
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
@@ -51,6 +54,13 @@ public class GUIListener implements Listener {
 
         e.setCancelled(true);
         if (customGUI.equals(CustomGUI.MENU_GUI)) {
+
+            // update train item based on actual train status
+            if (botAgent.getTrainStatus())
+                CustomGUI.MENU_GUI.setItem(3, CustomItems.STOP_TRAINING.getItemStack());
+            else
+                CustomGUI.MENU_GUI.setItem(3, CustomItems.START_TRAINING.getItemStack());
+
             switch (customItem) {
 
                 case START_REPLAY:
@@ -62,12 +72,12 @@ public class GUIListener implements Listener {
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                     break;
                 case START_TRAINING:
-                    botManager.getBotAgent().setTrainStatus(true);
+                    botManager.getBotAgent().trainBot();
                     CustomGUI.MENU_GUI.setItem(3, CustomItems.STOP_TRAINING.getItemStack());
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                     break;
                 case STOP_TRAINING:
-                    botManager.getBotAgent().setTrainStatus(false);
+                    botManager.getBotAgent().stopTraining();
                     CustomGUI.MENU_GUI.setItem(3, CustomItems.START_TRAINING.getItemStack());
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                     break;
