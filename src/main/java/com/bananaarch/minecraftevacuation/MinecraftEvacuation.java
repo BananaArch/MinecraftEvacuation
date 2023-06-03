@@ -46,10 +46,10 @@ public final class MinecraftEvacuation extends JavaPlugin implements Listener {
         System.out.println("Minecraft School Evacuation by Kyle Shibao & Faith Kim");
     }
 
-//    @Override
-//    public void onDisable() {
-//        taskManager.cancelAllTasks();
-//        botManager.deleteAll();
-//    }
+    @Override
+    public void onDisable() {
+        taskManager.cancelAllTasks();
+        botManager.deleteAll();
+    }
 
 }

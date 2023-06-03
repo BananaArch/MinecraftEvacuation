@@ -15,7 +15,7 @@ public enum Action {
     JUMP_EAST(new Vector(1, 1, 0)),
     JUMP_WEST(new Vector(-1, 1, 0));
 
-    private Vector vector;
+    private final Vector vector;
 
     Action(Vector vector) {
         this.vector = vector;

@@ -36,11 +36,11 @@ public class BotAgent {
 
     // enable botAgent, tickTask
     public void setEnabled(boolean enabled) {
-        if (enabled) {
-            this.tickTaskId = taskManager.scheduleRepeatingTask(this::tick, 0, 1);
-        } else {
-            taskManager.cancelTask(tickTaskId);
-        }
+//        if (enabled) {
+//            this.tickTaskId = taskManager.scheduleRepeatingTask(this::tick, 0, 1);
+//        } else {
+//            taskManager.cancelTask(tickTaskId);
+//        }
     }
 
     // enable training, trainTaskId
@@ -84,25 +84,31 @@ public class BotAgent {
 
             ChatUtil.broadcastMessage(ChatColor.GRAY + "Starting the " + ChatColor.GREEN + "training" + ChatColor.GRAY + " process");
 
-            final Environment mdp = new Environment(bot);
-            QLearningDiscreteDense dql = new QLearningDiscreteDense<>(
-                    mdp,
-                    NetworkUtil.buildDQNFactory(),
-                    NetworkUtil.buildConfig()
-            );
-
-            dql.train();
-            mdp.close();
-
             try {
-                dql.getNeuralNet().save(randomNetworkName);
-            } catch (IOException e) {
-                ChatUtil.broadcastError("Error with Neural Network saving.");
-                throw new RuntimeException("Error with NN saving");
+                final Environment mdp = new Environment(bot);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
-            bot.resetLocation();
-            evaluateNetwork(bot, randomNetworkName);
+//            QLearningDiscreteDense dql = new QLearningDiscreteDense<>(
+//                    mdp,
+//                    NetworkUtil.buildDQNFactory(),
+//                    NetworkUtil.buildConfig()
+//            );
+//
+//            dql.train();
+//            mdp.close();
+//
+//            try {
+//                dql.getNeuralNet().save(randomNetworkName);
+//            } catch (IOException e) {
+//                ChatUtil.broadcastError("Error with Neural Network saving.");
+//                throw new RuntimeException("Error with NN saving");
+//            }
+//
+//            bot.resetLocation();
+//            evaluateNetwork(bot, randomNetworkName);
+//
 
             ChatUtil.broadcastMessage(ChatColor.GRAY + "Successfully finished the " + ChatColor.GREEN + "training" + ChatColor.GRAY + " process");
             taskManager.cancelTask(trainTaskId);
