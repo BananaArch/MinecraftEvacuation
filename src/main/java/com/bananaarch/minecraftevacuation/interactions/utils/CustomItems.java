@@ -109,6 +109,20 @@ public enum CustomItems {
             true,
             Material.TARGET
     ),
+    GENERATE_PATH(
+            "Generate path",
+            ChatColor.YELLOW,
+            "Click here to generate all the paths for the bots",
+            false,
+            Material.COMMAND_BLOCK_MINECART
+    ),
+    FOLLOW_PATH(
+            "Follow path",
+            ChatColor.YELLOW,
+            "Click here to have all the bots follow the path (Make sure the paths are generated first)",
+            false,
+            Material.HOPPER_MINECART
+    ),
     BASE_BOT_INFO(
             "Bot Info",
             ChatColor.WHITE,
@@ -123,10 +137,10 @@ public enum CustomItems {
             false,
             Material.LEVER
     ),
-    SHOW_GAMESTATE(
-            "Show Gamestate",
+    SHOW_PATH(
+            "Show Path",
             ChatColor.WHITE,
-            "Click here to show the Bot's gamestate for " + ChatColor.GREEN + "15 seconds",
+            "Click here to show the Bot's optimal path for " + ChatColor.GREEN + "5 seconds",
             false,
             Material.COMMAND_BLOCK_MINECART
 

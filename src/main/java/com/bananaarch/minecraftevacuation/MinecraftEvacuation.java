@@ -5,10 +5,13 @@ import com.bananaarch.minecraftevacuation.tasks.TaskManager;
 import com.bananaarch.minecraftevacuation.interactions.listeners.*;
 import com.bananaarch.minecraftevacuation.interactions.command.MenuCommand;
 import org.bukkit.Bukkit;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.deeplearning4j.config.DL4JClassLoading;
+import org.nd4j.common.config.ND4JClassLoading;
+import org.nd4j.linalg.api.ndarray.INDArray;
+import org.nd4j.linalg.factory.Nd4j;
 
-public final class MinecraftEvacuation extends JavaPlugin implements Listener {
+public final class MinecraftEvacuation extends JavaPlugin {
 
     private static MinecraftEvacuation instance;
     private TaskManager taskManager;
@@ -31,6 +34,14 @@ public final class MinecraftEvacuation extends JavaPlugin implements Listener {
 
     @Override
     public void onEnable() {
+
+        /*
+        https://community.konduit.ai/t/deeplearning4j-for-minecraft-plugins-doesnt-work-due-to-different-entry-point/1719/14
+        THANK YOU TO THIS MAN!!! I LOVE YOU!
+         */
+        DL4JClassLoading.setDl4jClassloader(this.getClassLoader());
+        ND4JClassLoading.setNd4jClassloader(this.getClassLoader());
+        System.out.println("Backend for MinecraftEvacuation: " + Nd4j.getBackend().getClass().getName());
 
         instance = this;
         taskManager = new TaskManager();

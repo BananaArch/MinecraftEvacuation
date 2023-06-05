@@ -22,6 +22,13 @@ public class TaskManager {
         return taskId;
     }
 
+    public int runAsyncTask(Runnable runnable) {
+        BukkitTask task = scheduler.runTaskAsynchronously(plugin, runnable);
+        int taskId = task.getTaskId();
+        tasks.put(taskId, task);
+        return taskId;
+    }
+
     public int scheduleTask(Runnable runnable, long delay) {
         BukkitTask task = scheduler.runTaskLater(plugin, runnable, delay);
         int taskId = task.getTaskId();
@@ -48,7 +55,7 @@ public class TaskManager {
         tasks.clear();
     }
 
-    public boolean hasTask(int id) {
+    public boolean containsTask(int id) {
         return tasks.containsKey(id);
     }
 

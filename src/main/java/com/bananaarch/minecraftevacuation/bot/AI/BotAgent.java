@@ -1,17 +1,17 @@
-package com.bananaarch.minecraftevacuation.bot.ML;
+package com.bananaarch.minecraftevacuation.bot.AI;
 
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
 import com.bananaarch.minecraftevacuation.bot.Bot;
 import com.bananaarch.minecraftevacuation.bot.BotManager;
-import com.bananaarch.minecraftevacuation.bot.ML.NN.Action;
-import com.bananaarch.minecraftevacuation.bot.ML.NN.BotState;
-import com.bananaarch.minecraftevacuation.bot.ML.NN.Environment;
+import com.bananaarch.minecraftevacuation.bot.AI.NN.Action;
+import com.bananaarch.minecraftevacuation.bot.AI.NN.BotState;
+import com.bananaarch.minecraftevacuation.bot.AI.NN.Environment;
+import com.bananaarch.minecraftevacuation.bot.utils.ChatUtil;
+import com.bananaarch.minecraftevacuation.bot.utils.NetworkUtil;
 import com.bananaarch.minecraftevacuation.tasks.TaskManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.util.Vector;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.rl4j.learning.sync.qlearning.discrete.QLearningDiscreteDense;
 import org.nd4j.linalg.api.ndarray.INDArray;
@@ -26,6 +26,7 @@ public class BotAgent {
     private final TaskManager taskManager = MinecraftEvacuation.getInstance().getTaskManager();
     private int tickTaskId;
     private int trainTaskId;
+    private int evaluateTaskId;
 
     public BotAgent(BotManager botManager) {
         this.botManager = botManager;
@@ -36,26 +37,11 @@ public class BotAgent {
 
     // enable botAgent, tickTask
     public void setEnabled(boolean enabled) {
-//        if (enabled) {
-//            this.tickTaskId = taskManager.scheduleRepeatingTask(this::tick, 0, 1);
-//        } else {
-//            taskManager.cancelTask(tickTaskId);
-//        }
-    }
-
-    // enable training, trainTaskId
-    public void stopTraining() {
-        if (!getTrainStatus()) {
-            ChatUtil.broadcastError("The bot is currently not training");
-            return;
+        if (enabled) {
+            this.tickTaskId = taskManager.scheduleRepeatingTask(this::tick, 0, 1);
+        } else {
+            taskManager.cancelTask(tickTaskId);
         }
-
-        ChatUtil.broadcastMessage(ChatColor.RED + "Stopping the " + ChatColor.DARK_RED + "training" + ChatColor.RED + " process");
-        taskManager.cancelTask(trainTaskId);
-    }
-
-    public boolean getTrainStatus() {
-        return taskManager.hasTask(trainTaskId);
     }
 
     private void tick() {
@@ -64,7 +50,23 @@ public class BotAgent {
         bots.forEach(Bot::tick);
     }
 
+    public boolean isTraining() {
+        return taskManager.containsTask(trainTaskId);
+    }
+
+    // enable training, trainTaskId
+    public void stopTraining() {
+        if (!isTraining()) {
+            ChatUtil.broadcastError("The bot is currently not training");
+            return;
+        }
+
+        taskManager.cancelTask(trainTaskId);
+        ChatUtil.broadcastMessage(ChatColor.RED + "Stopping the " + ChatColor.DARK_RED + "training" + ChatColor.RED + " process");
+    }
+
     public void trainBot() {
+
         Set<Bot> bots = botManager.getBots();
 
         Bot bot = bots.iterator().next();
@@ -80,54 +82,75 @@ public class BotAgent {
 
         final String randomNetworkName = "network-" + System.currentTimeMillis() + ".zip";
 
-        this.trainTaskId = taskManager.runTask(() -> {
+        ChatUtil.broadcastMessage(ChatColor.GRAY + "Starting the " + ChatColor.GREEN + "training" + ChatColor.GRAY + " process");
 
-            ChatUtil.broadcastMessage(ChatColor.GRAY + "Starting the " + ChatColor.GREEN + "training" + ChatColor.GRAY + " process");
+
+        final Environment mdp = new Environment(bot);
+        QLearningDiscreteDense dql = new QLearningDiscreteDense<>(
+                mdp,
+                NetworkUtil.buildDQNDenseNetworkConfiguration(),
+                NetworkUtil.buildConfig()
+        );
+
+        /*
+        Has to be async task or will not clog up synchronous scheduler
+         */
+        this.trainTaskId = taskManager.runAsyncTask(() -> {
+            dql.train();
+            mdp.close();
+
+            ChatUtil.broadcastMessage(ChatColor.GREEN + "Successfully finished training");
 
             try {
-                final Environment mdp = new Environment(bot);
-            } catch (Exception e) {
-                e.printStackTrace();
+                dql.getNeuralNet().save(randomNetworkName);
+            } catch (IOException e) {
+                ChatUtil.broadcastError("Error with Neural Network saving.");
+                throw new RuntimeException("Error with NN saving");
             }
 
-//            QLearningDiscreteDense dql = new QLearningDiscreteDense<>(
-//                    mdp,
-//                    NetworkUtil.buildDQNFactory(),
-//                    NetworkUtil.buildConfig()
-//            );
-//
-//            dql.train();
-//            mdp.close();
-//
-//            try {
-//                dql.getNeuralNet().save(randomNetworkName);
-//            } catch (IOException e) {
-//                ChatUtil.broadcastError("Error with Neural Network saving.");
-//                throw new RuntimeException("Error with NN saving");
-//            }
-//
-//            bot.resetLocation();
-//            evaluateNetwork(bot, randomNetworkName);
-//
+            bot.resetLocation();
+            evaluateNetwork(bot, randomNetworkName);
 
-            ChatUtil.broadcastMessage(ChatColor.GRAY + "Successfully finished the " + ChatColor.GREEN + "training" + ChatColor.GRAY + " process");
+
+            ChatUtil.broadcastMessage(ChatColor.GRAY + "Successfully saved the " + ChatColor.GREEN + "model");
             taskManager.cancelTask(trainTaskId);
 
         });
 
     }
 
+
+    public boolean isEvaluating() {
+        return taskManager.containsTask(evaluateTaskId);
+    }
+
+    public void stopEvaluating() {
+        if (!isEvaluating()) {
+            ChatUtil.broadcastError("The bot is currently not replaying the model");
+            return;
+        }
+
+        ChatUtil.broadcastMessage(ChatColor.RED + "Stopping the " + ChatColor.DARK_RED + "replaying" + ChatColor.RED + " process");
+        taskManager.cancelTask(evaluateTaskId);
+
+    }
+
     private void evaluateNetwork(Bot bot, String randomNetworkName) {
         final MultiLayerNetwork multiLayerNetwork = NetworkUtil.loadNetwork(randomNetworkName);
 
-        while(!bot.standingOnTargetBlock()) {
+        taskManager.scheduleRepeatingTask(() -> {
+
             try {
+
+                if (bot.standingOnTargetBlock())
+                    stopEvaluating();
+
                 BotState botState = new BotState(bot.getState());
                 INDArray output = multiLayerNetwork.output(botState.getMatrix(), false);
                 double[] data = output.data().asDouble();
                 //TODO: DELETE LATER
-//                    if (data.length != Action.values().length)
-//                        throw new Exception();
+                if (data.length != Action.values().length)
+                    throw new ArrayIndexOutOfBoundsException();
 
                 int maxValueIndex = NetworkUtil.getMaxValueIndex(data);
 
@@ -144,25 +167,11 @@ public class BotAgent {
                 System.out.println(e);
                 ChatUtil.broadcastError("Error with evaluating the network.");
                 ChatUtil.broadcastError(e.toString());
-                return;
+                stopEvaluating();
             }
-        }
 
-    }
+        }, 0, 1);
 
-    public int rewardFunction(Bot bot, Action movement) {
-        Location botLocation = bot.getFlooredLocation();
-        Location targetLocation = bot.getFlooredTargetLocation();
-        Location botMovingBlockLocation = bot.getFlooredLocation().add(movement.getVector());
-        Material blockMaterial = botMovingBlockLocation.getBlock().getType();
-
-        if (botLocation.equals(targetLocation.add(new Vector(0, 1, 0)))) // if reached target Destination
-            return 100;
-        if (bot.containsInPastLocations(botLocation)) // if already passed
-            return -1;
-        if (!Materials.AIR.contains(blockMaterial)) // if wall
-            return -25;
-        return 1;
     }
 
 }

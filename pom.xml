@@ -6,25 +6,27 @@
     <packaging>jar</packaging>
     <name>MinecraftEvacuation</name>
     <properties>
-        <dl4j-master.version>1.0.0-M2</dl4j-master.version>
-        <rl4j-master.version>1.0.0-M1</rl4j-master.version>
-        <!-- <nd4j.backend>nd4j-cuda-10.2-platform</nd4j.backend> -->
-        <nd4j.backend>nd4j-native-platform</nd4j.backend>
+        <dl4j-master.version>1.0.0-M2.1</dl4j-master.version>
+        <rl4j-master.version>1.0.0-M1.1</rl4j-master.version>
+        <nd4j.backend>nd4j-cuda-10.1-platform</nd4j.backend>
+<!--        <nd4j.backend>nd4j-native-platform</nd4j.backend>-->
         <java.version>1.8</java.version>
-        <maven-shade-plugin.version>2.4.3</maven-shade-plugin.version>
+        <maven-shade-plugin.version>3.4.1</maven-shade-plugin.version>
         <logback.version>1.1.7</logback.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
     </properties>
 
+<!--    TODO: https://www.spigotmc.org/threads/downloading-maven-dependencies-at-runtime.509513/ -->
+
     <repositories>
-        <repository>
-            <id>spigotmc-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
         <repository>
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>spigotmc-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
     </repositories>
     <dependencies>
@@ -44,10 +46,16 @@
             <version>${dl4j-master.version}</version>
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>org.nd4j</groupId>-->
+<!--            <artifactId>${nd4j.backend}</artifactId>-->
+<!--            <version>${dl4j-master.version}</version>-->
+<!--        </dependency>-->
+
         <dependency>
             <groupId>org.nd4j</groupId>
-            <artifactId>${nd4j.backend}</artifactId>
-            <version>${dl4j-master.version}</version>
+            <artifactId>nd4j-cuda-11.6-platform</artifactId>
+            <version>1.0.0-M2.1</version>
         </dependency>
 
         <dependency>
@@ -67,8 +75,6 @@
             <version>${rl4j-master.version}</version>
         </dependency>
 
-
-
     </dependencies>
 
     <build>
@@ -79,8 +85,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.5.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>9</source>
+                    <target>9</target>
                 </configuration>
             </plugin>
 
@@ -121,15 +127,21 @@
             </plugin>
             <!--             End of Remapped Plugin  -->
 
-
+            <!--             Shade plugin            -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>${maven-shade-plugin.version}</version>
                 <configuration>
                     <shadedArtifactAttached>true</shadedArtifactAttached>
-                    <shadedClassifierName>bin</shadedClassifierName>
+                    <shadedClassifierName>shared</shadedClassifierName>
                     <createDependencyReducedPom>true</createDependencyReducedPom>
+                    <artifactSet>
+                        <includes>
+                            <include>${project.groupId}:${project.artifactId}:${project.packaging}:remapped-obf:${project.version}</include>
+                            <include>*:*</include>
+                        </includes>
+                    </artifactSet>
                     <filters>
                         <filter>
                             <artifact>*:*</artifact>
@@ -142,7 +154,6 @@
                         </filter>
                     </filters>
                 </configuration>
-
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -163,6 +174,7 @@
                 </executions>
             </plugin>
 
+            <!--            End of Shade Plugin         -->
 
 
 

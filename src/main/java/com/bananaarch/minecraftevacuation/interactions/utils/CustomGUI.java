@@ -22,7 +22,9 @@ public enum CustomGUI {
                 put(13, CustomItems.JUNIOR_ITEM.getItemStack());
                 put(14, CustomItems.SENIOR_ITEM.getItemStack());
                 put(15, CustomItems.TEACHER_ITEM.getItemStack());
+                put(21, CustomItems.GENERATE_PATH.getItemStack());
                 put(22, CustomItems.EXIT_GUI.getItemStack());
+                put(23, CustomItems.FOLLOW_PATH.getItemStack());
             }}
     ),
     BOT_GUI(
@@ -31,7 +33,7 @@ public enum CustomGUI {
             new HashMap<Integer, ItemStack>() {{
                 put(0, CustomItems.BASE_BOT_INFO.getItemStack());
                 put(1, CustomItems.CHANGE_GENDER.getItemStack());
-                put(2, CustomItems.SHOW_GAMESTATE.getItemStack());
+                put(2, CustomItems.SHOW_PATH.getItemStack());
                 put(7, CustomItems.DELETE_BOT.getItemStack());
                 put(8, CustomItems.EXIT_GUI.getItemStack());
             }}

@@ -1,5 +1,10 @@
 package com.bananaarch.minecraftevacuation.bot;
 
+import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
+import com.bananaarch.minecraftevacuation.bot.AI.NN.Action;
+import com.bananaarch.minecraftevacuation.bot.AI.pathfinding.AStar;
+import com.bananaarch.minecraftevacuation.bot.utils.MaterialUtil;
+import com.bananaarch.minecraftevacuation.tasks.TaskManager;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import net.minecraft.network.protocol.Packet;
@@ -10,20 +15,20 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.LevelChunk;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
-import org.nd4j.linalg.api.ndarray.INDArray;
-import org.nd4j.linalg.factory.Nd4j;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public abstract class Bot extends ServerPlayer {
 
@@ -31,7 +36,12 @@ public abstract class Bot extends ServerPlayer {
     private Location initialLocation;
     private Location targetLocation;
     private Set<Location> pastLocations;
+    private byte groundTicks;
+    private byte jumpTicks;
+    private Queue<Location> path;
+    private final TaskManager taskManager = MinecraftEvacuation.getInstance().getTaskManager();
 //    private Environment mdp;
+
     private static final int OBSERVATION_LENGTH = 15;
     private static final int OBSERVATION_WIDTH = 15;
     private static final int OBSERVATION_HEIGHT = 4;
@@ -44,6 +54,7 @@ public abstract class Bot extends ServerPlayer {
         this.targetLocation = null;
         this.velocity = new Vector(0, 0, 0);
         this.pastLocations = new HashSet<>();
+        this.path = null;
 //        this.mdp = new Environment(this);
     }
 
@@ -83,7 +94,16 @@ public abstract class Bot extends ServerPlayer {
     public void tick() {
         loadChunks();
         super.tick();
-        this.move(MoverType.SELF, new Vec3(velocity.getX(), velocity.getY(), velocity.getZ()));
+
+        if (jumpTicks > 0) --jumpTicks;
+        if (checkGround()) {
+            if (groundTicks < 5) groundTicks ++;
+        } else {
+            groundTicks = 0;
+        }
+
+        updateLocation();
+
         baseTick();
         pastLocations.add(getFlooredLocation());
     }
@@ -101,16 +121,13 @@ public abstract class Bot extends ServerPlayer {
         }
     }
 
-    public void walk(Vector velocity) {
-        double max = 0.4;
-        addVelocity(velocity);
-        if (velocity.length() > max)
-            velocity.normalize().multiply(max);
+    public void teleportByAction(Action action) {
+        Location newLocation = getLocation().add(action.getVector());
+        teleportTo(newLocation.getX(), newLocation.getY(), newLocation.getZ());
     }
 
     public void resetLocation() {
 
-        ServerLevel level = (ServerLevel) initialLocation.getWorld();
         this.teleportTo(initialLocation.getX(), initialLocation.getY(), initialLocation.getZ());
 
         pastLocations.clear();
@@ -118,6 +135,199 @@ public abstract class Bot extends ServerPlayer {
         this.setVelocity(new Vector(0, 0, 0));
 
     }
+
+    public void generatePath() {
+        AStar aStar = new AStar(initialLocation, targetLocation);
+        this.path = aStar.getPath();
+    }
+
+    public void followPath() {
+
+        if (path == null || path.isEmpty()) {
+            return;
+        }
+
+//        Queue<Location> checkpoints = path.clone();
+//
+//        while (!path.isEmpty()) {
+//            Location nextLocation = path.poll();
+//            Vector direction = nextLocation.toVector().subtract(getLocation().toVector());
+//            direction.normalize();
+//            look(direction);
+//
+//            if(nextLocation.getY() > getLocation().getY()){
+//                // jump and walk
+//                jump(direction);
+//            } else {
+//                // walk
+//                walk(direction);
+//            }
+//        }
+//
+//        path = null;
+
+    }
+
+    public void showPath() {
+        AStar aStar = new AStar(initialLocation, targetLocation);
+        Location[] path = aStar.getPath().toArray(new Location[0]);
+        if (path == null) return;
+        BlockData[] blockDataPath = new BlockData[path.length];
+
+        for (int i = 0; i < path.length; i++) {
+
+            Block block = path[i].getBlock();
+            blockDataPath[i] = path[i].getBlock().getBlockData();
+
+            block.setType(Material.GLASS);
+
+        }
+
+        taskManager.scheduleTask(() -> {
+            for (int i = 0; i < path.length; i++) {
+                path[i].getBlock().setBlockData(blockDataPath[i]);
+            }
+        }, 100);
+
+    }
+
+    public boolean checkGround() {
+        double vy = velocity.getY();
+
+        if (vy > 0) {
+            return false;
+        }
+
+        return isStandingOnBlock();
+    }
+
+    public boolean isStandingOnBlock() {
+        World world = getBukkitEntity().getWorld();
+        AABB box = getBoundingBox();
+
+        double[] xVals = new double[]{
+                box.minX,
+                box.maxX
+        };
+
+        double[] zVals = new double[]{
+                box.minZ,
+                box.maxZ
+        };
+
+        BoundingBox playerBox = new BoundingBox(box.minX, position().y - 0.01, box.minZ,
+                box.maxX, position().y + getBbHeight(), box.maxZ);
+        List<Block> standingOn = new ArrayList<>();
+        List<Location> locations = new ArrayList<>();
+
+        for (double x : xVals) {
+            for (double z : zVals) {
+                Location loc = new Location(world, x, position().y - 0.01, z);
+                Block block = world.getBlockAt(loc);
+
+                if ((block.getType().isSolid() || MaterialUtil.canStandOn(block.getType())) && playerBox.overlaps(block.getBoundingBox())) {
+                    if (!locations.contains(block.getLocation())) {
+                        standingOn.add(block);
+                        locations.add(block.getLocation());
+                    }
+                }
+            }
+        }
+
+        //Fence/wall check
+        for (double x : xVals) {
+            for (double z : zVals) {
+                Location loc = new Location(world, x, position().y - 0.51, z);
+                Block block = world.getBlockAt(loc);
+                BoundingBox blockBox = loc.getBlock().getBoundingBox();
+                BoundingBox modifiedBox = new BoundingBox(blockBox.getMinX(), blockBox.getMinY(), blockBox.getMinZ(), blockBox.getMaxX(),
+                        blockBox.getMinY() + 1.5, blockBox.getMaxZ());
+
+                if ((MaterialUtil.FENCE.contains(block.getType()) || MaterialUtil.GATES.contains(block.getType()))
+                        && block.getType().isSolid() && playerBox.overlaps(modifiedBox)) {
+                    if (!locations.contains(block.getLocation())) {
+                        standingOn.add(block);
+                        locations.add(block.getLocation());
+                    }
+                }
+            }
+        }
+
+        Collections.sort(standingOn, (a, b) ->
+                Double.compare(a.getLocation().distanceSquared(getLocation()), b.getLocation().distanceSquared(getLocation()))
+        );
+
+        return !standingOn.isEmpty();
+
+    }
+
+    private void updateLocation() {
+        double y;
+
+        if (isBotSwimming()) {
+            y = Math.min(velocity.getY() + 0.005, 0.1);
+            addFriction(0.8);
+            velocity.setY(y);
+        } else {
+            if (groundTicks != 0) {
+                velocity.setY(0);
+                addFriction(0.5);
+                y = 0;
+            } else {
+                y = velocity.getY();
+                velocity.setY(Math.max(y - 0.0175, -3.5));
+            }
+        }
+
+        this.move(MoverType.SELF, new Vec3(velocity.getX(), y, velocity.getZ()));
+    }
+
+    public void addFriction(double factor) {
+        double frictionMin = 0.01;
+
+        double x = velocity.getX();
+        double z = velocity.getZ();
+
+        velocity.setX(Math.abs(x) < frictionMin ? 0 : x * factor);
+        velocity.setZ(Math.abs(z) < frictionMin ? 0 : z * factor);
+    }
+
+    public void walkByAction(Action action) {
+        action.walk(this);
+    }
+
+    public void walk(Vector velocity) {
+        double max = 0.4;
+        addVelocity(velocity);
+        if (velocity.length() > max)
+            velocity.normalize().multiply(max);
+    }
+    public void jump(Vector vel) {
+        if (jumpTicks == 0 && groundTicks > 1) {
+            jumpTicks = 4;
+            addVelocity(vel);
+        }
+    }
+
+    public void jump() {
+        jump(new Vector(0, 0.05, 0));
+    }
+
+
+    public boolean isBotSwimming() {
+        Location loc = getLocation();
+
+        for (int i = 0; i <= 2; i++) {
+            Material type = loc.getBlock().getType();
+            if (type == Material.WATER || type == Material.LAVA) {
+                return true;
+            }
+            loc.add(0, 0.9, 0);
+        }
+
+        return false;
+    }
+
 
     private void look(Vector vector) {
         float yaw, pitch;
@@ -151,7 +361,7 @@ public abstract class Bot extends ServerPlayer {
         if (NumberConversions.isFinite(vector.getX()) && NumberConversions.isFinite(vector.getY()) && NumberConversions.isFinite(vector.getZ())) {
             velocity.add(vector);
         } else {
-            velocity = vector;
+            this.velocity = vector;
         }
         look(velocity);
     }
@@ -209,20 +419,26 @@ public abstract class Bot extends ServerPlayer {
 
     }
 
+    /*
+    * Calculates the size of observation based on OBSERVATION_WIDTH, OBSERVATION_LENGTH, OBSERVATION_HEIGHT
+    *
+    * @return Size of observation.
+    */
     public static int getObservationSize() {
         return OBSERVATION_LENGTH * OBSERVATION_HEIGHT * OBSERVATION_WIDTH + 6;
 //        6 comes from targetLocation x, y, z in world and playerLocation x, y, z in world
     }
 
-    public INDArray getState() {
-
-
+    /*
+     * Calculates an array of the State of the bot. This is a OBSERVATION_WIDTH x OBSERVATION_LENGTH x OBSERVATION_HEIGHT size rectangle that the bot can "see."
+     *
+     * @return Array of observation.
+     */
+    public double[] getState() {
 
         Location location = getLocation();
 
-        int[] shape = new int[]{OBSERVATION_LENGTH, OBSERVATION_WIDTH, OBSERVATION_HEIGHT};
-
-        INDArray gameState = Nd4j.create(shape);
+        double[] data = new double[getObservationSize()];
 
         int startingLengthIndex = OBSERVATION_LENGTH % 2 != 0 ? Math.floorDiv(OBSERVATION_LENGTH, 2) : OBSERVATION_LENGTH / 2 - 1;
         int startingWidthIndex = OBSERVATION_WIDTH % 2 != 0 ? Math.floorDiv(OBSERVATION_WIDTH, 2) : OBSERVATION_WIDTH / 2 - 1;
@@ -246,17 +462,9 @@ public abstract class Bot extends ServerPlayer {
                         k++
                 ) {
 
-//                    System.out.print("(" + i + ", " + j + ", " + k + ")\t");
-
                     Block scannedBlock = getBlockAtLocation(location, i, j, k);
 
-                    gameState.putScalar(
-                            i + startingLengthIndex,
-                            j + startingWidthIndex,
-                            k + startingHeightIndex,
-                            scannedBlock.isEmpty() || !scannedBlock.getType().isSolid() ? 1 : 0
-                    );
-
+                    data[i + startingLengthIndex + j + startingWidthIndex + k + startingHeightIndex] = scannedBlock.isEmpty() || !scannedBlock.getType().isSolid() ? 1 : 0;
 
                 }
 
@@ -264,27 +472,17 @@ public abstract class Bot extends ServerPlayer {
 
         }
 
-//        position of player
-        gameState.putScalar(
-                startingLengthIndex,
-                startingWidthIndex,
-                startingHeightIndex,
-                -1
-        );
+        data[startingLengthIndex + startingWidthIndex + startingHeightIndex] = -1;
+        data[getObservationSize() - 6] = targetLocation.getX();
+        data[getObservationSize() - 5] = targetLocation.getY();
+        data[getObservationSize() - 4] = targetLocation.getZ();
+        data[getObservationSize() - 3] = location.getX();
+        data[getObservationSize() - 2] = location.getY();
+        data[getObservationSize() - 1] = location.getZ();
 
-        INDArray arrayState = Nd4j.toFlattened(gameState);
+//        System.out.println(Arrays.toString(data));
 
-//        position of targetLocation in world
-        arrayState.add(targetLocation.getX());
-        arrayState.add(targetLocation.getY());
-        arrayState.add(targetLocation.getZ());
-
-//        position of player in world
-        arrayState.add(location.getX());
-        arrayState.add(location.getY());
-        arrayState.add(location.getZ());
-
-        return arrayState;
+        return data;
 
     }
 
@@ -308,7 +506,7 @@ public abstract class Bot extends ServerPlayer {
     }
 
     public boolean standingOnTargetBlock() {
-        return getFlooredLocation().add(new Vector(0, -1, 0)).equals(getFlooredTargetLocation()) || getFlooredLocation().equals(getFlooredLocation());
+        return getFlooredLocation().add(new Vector(0, -1, 0)).equals(getFlooredTargetLocation()) || getFlooredLocation().equals(getFlooredTargetLocation());
     }
 
     public abstract List<String> getInfo();

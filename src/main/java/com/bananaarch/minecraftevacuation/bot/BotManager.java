@@ -1,7 +1,7 @@
 package com.bananaarch.minecraftevacuation.bot;
 
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
-import com.bananaarch.minecraftevacuation.bot.ML.BotAgent;
+import com.bananaarch.minecraftevacuation.bot.AI.BotAgent;
 import com.bananaarch.minecraftevacuation.tasks.TaskManager;
 import org.bukkit.Location;
 
@@ -13,6 +13,7 @@ public class BotManager {
 
     private final ConcurrentHashMap<Integer, Bot> bots = new ConcurrentHashMap<>();
     private final BotAgent botAgent = new BotAgent(this);
+    private final TaskManager taskManager = MinecraftEvacuation.getInstance().getTaskManager();
     private boolean isVisible;
 
     public BotManager() {
@@ -84,4 +85,12 @@ public class BotManager {
     public void resetLocation() {
         bots.values().forEach(Bot::resetLocation);
     }
+
+    public void generatePaths() { bots.values().forEach(bot -> {
+        taskManager.runAsyncTask(() -> bot.generatePath());
+    });
+    }
+
+    public void followPaths() { bots.values().forEach(Bot::followPath); }
+
 }

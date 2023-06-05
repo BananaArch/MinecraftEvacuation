@@ -4,11 +4,12 @@ import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
 import com.bananaarch.minecraftevacuation.bot.Bot;
 import com.bananaarch.minecraftevacuation.bot.BotManager;
 import com.bananaarch.minecraftevacuation.bot.Genderable;
-import com.bananaarch.minecraftevacuation.bot.ML.BotAgent;
+import com.bananaarch.minecraftevacuation.bot.AI.BotAgent;
 import com.bananaarch.minecraftevacuation.interactions.utils.CustomItems;
 import com.bananaarch.minecraftevacuation.interactions.utils.CustomGUI;
 import com.bananaarch.minecraftevacuation.interactions.utils.ItemStackUtil;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -17,7 +18,6 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.MetadataValue;
-import org.nd4j.linalg.api.ops.impl.reduce.same.Min;
 
 import java.util.Arrays;
 import java.util.List;
@@ -43,7 +43,7 @@ public class GUIListener implements Listener {
         // check if GUI is custom
         if (customGUI == null) return;
         // makes sure item is in GUI (not inventory)
-        if (e.getClickedInventory().equals(e.getWhoClicked().getInventory())) return;
+        if (e.getClickedInventory() == null || e.getClickedInventory().equals(e.getWhoClicked().getInventory())) return;
 
         ItemStack currentItem = e.getCurrentItem();
 
@@ -53,16 +53,28 @@ public class GUIListener implements Listener {
                         .orElse(null);
 
         e.setCancelled(true);
+
+//        TODO: WRITE BETTER
+        if (customItem == null || currentItem.getType().equals(Material.AIR)) return;
+
         if (customGUI.equals(CustomGUI.MENU_GUI)) {
 
             // update train item based on actual train status
-            if (botAgent.getTrainStatus())
+            if (botAgent.isTraining())
                 CustomGUI.MENU_GUI.setItem(3, CustomItems.STOP_TRAINING.getItemStack());
             else
                 CustomGUI.MENU_GUI.setItem(3, CustomItems.START_TRAINING.getItemStack());
 
             switch (customItem) {
 
+                case GENERATE_PATH:
+                    botManager.generatePaths();
+                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
+                    break;
+                case FOLLOW_PATH:
+                    botManager.followPaths();
+                    player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
+                    break;
                 case START_REPLAY:
                     CustomGUI.MENU_GUI.setItem(2, CustomItems.STOP_REPLAY.getItemStack());
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
@@ -91,6 +103,7 @@ public class GUIListener implements Listener {
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
                     break;
                 case STUDENTS_HIDDEN:
+                    botManager.resetLocation();
                     botManager.showAll();
                     CustomGUI.MENU_GUI.setItem(5, CustomItems.STUDENTS_SHOWN.getItemStack());
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 100);
@@ -172,8 +185,10 @@ public class GUIListener implements Listener {
                         throw new ClassCastException("You are not allowed to change gender of non-genderable class");
                     }
                     break;
-                case SHOW_GAMESTATE:
-                    // TODO: make gameState visible & change GameState into class not Util
+                case SHOW_PATH:
+                    bot.showPath();
+                    player.closeInventory();
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 1, 8);
                     break;
                 case DELETE_BOT:
                     botManager.deleteBot(botId);

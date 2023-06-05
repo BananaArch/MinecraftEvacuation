@@ -59,6 +59,7 @@ public class BlockPlacedListener implements Listener {
                 break;
             case TARGET_BLOCK:
                 botManager.setBotsTargetLocation(blockPlacedLocation);
+                botManager.generatePaths();
                 player.sendMessage(ChatColor.GRAY + "Successfully set a " + ChatColor.GREEN + "Target");
                 player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 0);
                 e.setCancelled(true);

@@ -1,4 +1,4 @@
-package com.bananaarch.minecraftevacuation.bot.ML;
+package com.bananaarch.minecraftevacuation.bot.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -14,8 +14,7 @@ public class ChatUtil {
 
     public static void broadcastError(String error) {
         Bukkit.getOnlinePlayers().forEach(p -> p.sendMessage(
-                ChatColor.YELLOW + "[NN | Error] " +
-                ChatColor.DARK_RED + error)
+                ChatColor.RED + "[NN | Error] " + ChatColor.DARK_RED + error)
         );
     }
 }
