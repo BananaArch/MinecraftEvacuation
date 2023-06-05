@@ -1,4 +1,4 @@
-package com.bananaarch.minecraftevacuation.interactions.utils;
+package com.bananaarch.minecraftevacuation.interactions.enums;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

@@ -8,10 +8,6 @@ import org.bukkit.Location;
 
 import java.util.*;
 
-/*
-TODO: convert all arraylist to set
- */
-
 public class AStar {
 
     private Location startLocation;
@@ -21,8 +17,15 @@ public class AStar {
     private Node endNode;
 
     private boolean pathFound = false;
-    private ArrayList<Node> checkedNodes = new ArrayList<>();
-    private ArrayList<Node> uncheckedNodes = new ArrayList<>();
+    private Set<Node> checkedNodes = new HashSet<>();
+    private PriorityQueue<Node> uncheckedNodes = new PriorityQueue<>(Comparator.comparing(Node::getEstimatedFinalWeight));
+
+    private Map<Location, Node> nodeMap = new HashMap<>();
+    private Map<Location, Double> locationDistanceCache = new HashMap<>();
+
+    /*
+    Maybe make it static and make it thread-safe so info would be shared across different instances
+     */
 
     private final int maxNodeTests = 15000;
     private final int maxFallDistance = 4;
@@ -33,6 +36,9 @@ public class AStar {
 
         this.startNode = new Node(startLocation, null, 0);
         this.endNode = new Node(endLocation, null, 0);
+
+        this.nodeMap.put(startLocation, this.startNode);
+        this.nodeMap.put(endLocation, this.endNode);
     }
 
     public LinkedList<Location> getPath() {
@@ -50,12 +56,7 @@ public class AStar {
         uncheckedNodes.add(startNode);
 
         while (checkedNodes.size() <= maxNodeTests && pathFound == false && uncheckedNodes.size() > 0) {
-            Optional<Node> minNode = uncheckedNodes.stream().min(Comparator.comparing(Node::getEstimatedFinalWeight));
-
-            if (!minNode.isPresent())
-                break;
-
-            Node node = minNode.get();
+            Node node = uncheckedNodes.poll();
 
             if (node.getEstimatedWeightLeft() != null && node.getEstimatedWeightLeft() < 1) {
                 pathFound = true;
@@ -89,21 +90,15 @@ public class AStar {
     }
 
     private Node getNode(Location location) {
-
-        for (Node node : checkedNodes) {
-            if (location.equals(node.getLocation()))
-                return node;
+        Node node = this.nodeMap.get(location);
+        if (node == null) {
+            node = new Node(location, null, 0);
+            this.nodeMap.put(location, node);
         }
-
-        return new Node(location, null, 0);
-
+        return node;
     }
 
     public class Node {
-
-    /*
-    TODO: maybe in the future make it extend Location
-     */
 
         private Location location;
 
@@ -121,9 +116,19 @@ public class AStar {
 
         public double getEstimatedFinalWeight() {
             if (estimatedWeightLeft == null)
-                this.estimatedWeightLeft = location.distance(endLocation);
+                this.estimatedWeightLeft = getCachedDistance(location, endLocation);
 
             return weight + 1.5 * estimatedWeightLeft;
+        }
+
+        private double getCachedDistance(Location location1, Location location2) {
+            if (locationDistanceCache.containsKey(location1)) {
+                return locationDistanceCache.get(location1);
+            } else {
+                double distance = location1.distanceSquared(location2);
+                locationDistanceCache.put(location1, distance);
+                return distance;
+            }
         }
 
         public void getReachableLocations() {
@@ -177,6 +182,7 @@ public class AStar {
                 targetNode.setOrigin(this);
 
                 uncheckedNodes.add(targetNode);
+                nodeMap.put(destLocation, targetNode);
 
                 return;
             }

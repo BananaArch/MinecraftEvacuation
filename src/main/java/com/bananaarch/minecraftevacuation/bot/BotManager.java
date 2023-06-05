@@ -91,6 +91,9 @@ public class BotManager {
     });
     }
 
-    public void followPaths() { bots.values().forEach(Bot::followPath); }
+    public void followPaths() { bots.values().forEach(bot -> {
+        taskManager.runAsyncTask(() -> bot.followPath());
+    });
+    }
 
 }

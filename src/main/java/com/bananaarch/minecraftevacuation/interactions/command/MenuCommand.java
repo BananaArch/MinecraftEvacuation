@@ -1,6 +1,6 @@
 package com.bananaarch.minecraftevacuation.interactions.command;
 
-import com.bananaarch.minecraftevacuation.interactions.utils.CustomGUI;
+import com.bananaarch.minecraftevacuation.interactions.enums.CustomGUI;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

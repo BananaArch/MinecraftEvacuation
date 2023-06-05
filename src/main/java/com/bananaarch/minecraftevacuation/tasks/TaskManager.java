@@ -43,6 +43,13 @@ public class TaskManager {
         return taskId;
     }
 
+    public int scheduleAsyncRepeatingTask(Runnable runnable, long delay, long period) {
+        BukkitTask task = scheduler.runTaskTimerAsynchronously(plugin, runnable, delay, period);
+        int taskId = task.getTaskId();
+        tasks.put(taskId, task);
+        return taskId;
+    }
+
     public void cancelTask(int taskId) {
         if (tasks.containsKey(taskId)) {
             tasks.get(taskId).cancel();

@@ -3,6 +3,8 @@ package com.bananaarch.minecraftevacuation.bot;
 import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
 import com.bananaarch.minecraftevacuation.bot.AI.NN.Action;
 import com.bananaarch.minecraftevacuation.bot.AI.pathfinding.AStar;
+import com.bananaarch.minecraftevacuation.bot.utils.BotUtil;
+import com.bananaarch.minecraftevacuation.bot.utils.ChatUtil;
 import com.bananaarch.minecraftevacuation.bot.utils.MaterialUtil;
 import com.bananaarch.minecraftevacuation.tasks.TaskManager;
 import com.mojang.authlib.GameProfile;
@@ -29,6 +31,8 @@ import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public abstract class Bot extends ServerPlayer {
 
@@ -143,28 +147,32 @@ public abstract class Bot extends ServerPlayer {
 
     public void followPath() {
 
+        ChatUtil.broadcastMessage("Following path");
+
         if (path == null || path.isEmpty()) {
             return;
         }
 
-//        Queue<Location> checkpoints = path.clone();
-//
-//        while (!path.isEmpty()) {
-//            Location nextLocation = path.poll();
-//            Vector direction = nextLocation.toVector().subtract(getLocation().toVector());
-//            direction.normalize();
-//            look(direction);
-//
-//            if(nextLocation.getY() > getLocation().getY()){
-//                // jump and walk
-//                jump(direction);
-//            } else {
-//                // walk
-//                walk(direction);
-//            }
-//        }
-//
-//        path = null;
+        Queue<Location> checkpoints = BotUtil.cloneLinkedList(path);
+
+        AtomicReference<Location> nextLocation = new AtomicReference<>(checkpoints.peek());
+        AtomicBoolean atDestination = new AtomicBoolean(false);
+
+        int taskId = taskManager.scheduleAsyncRepeatingTask(() -> {
+
+            if (getFlooredLocation() != floorLocation(nextLocation.get())) {
+                Vector direction = nextLocation.get().toVector().subtract(getLocation().toVector());
+                direction.normalize();
+                this.walk(direction);
+            } else {
+                if (checkpoints.size() == 0)
+                    atDestination = true;
+                else
+                    nextLocation = checkpoints.peek();
+                ChatUtil.broadcastMessage("Next location");
+            }
+
+        }, 0, 1);
 
     }
 
@@ -187,7 +195,7 @@ public abstract class Bot extends ServerPlayer {
             for (int i = 0; i < path.length; i++) {
                 path[i].getBlock().setBlockData(blockDataPath[i]);
             }
-        }, 100);
+        }, 20*15);
 
     }
 
@@ -417,6 +425,13 @@ public abstract class Bot extends ServerPlayer {
         location.setZ(Math.floor(location.getZ()));
         return location;
 
+    }
+
+    public Location floorLocation(Location location) {
+        location.setX(Math.floor(location.getX()));
+        location.setY(Math.floor(location.getY()));
+        location.setZ(Math.floor(location.getZ()));
+        return location;
     }
 
     /*

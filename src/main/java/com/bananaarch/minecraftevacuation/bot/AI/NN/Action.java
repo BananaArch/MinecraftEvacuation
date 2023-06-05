@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public enum Action {
+
     NORTH(new Vector(0, 0, -1)),
     SOUTH(new Vector(0, 0, 1)),
     EAST(new Vector(1, 0, 0)),

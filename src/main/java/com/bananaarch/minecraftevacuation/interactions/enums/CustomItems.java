@@ -1,4 +1,4 @@
-package com.bananaarch.minecraftevacuation.interactions.utils;
+package com.bananaarch.minecraftevacuation.interactions.enums;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -140,7 +140,7 @@ public enum CustomItems {
     SHOW_PATH(
             "Show Path",
             ChatColor.WHITE,
-            "Click here to show the Bot's optimal path for " + ChatColor.GREEN + "5 seconds",
+            "Click here to show the Bot's optimal path for " + ChatColor.GREEN + "15 seconds",
             false,
             Material.COMMAND_BLOCK_MINECART
 

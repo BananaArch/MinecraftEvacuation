@@ -4,7 +4,7 @@ import com.bananaarch.minecraftevacuation.MinecraftEvacuation;
 import com.bananaarch.minecraftevacuation.bot.BotFactory;
 import com.bananaarch.minecraftevacuation.bot.BotManager;
 import com.bananaarch.minecraftevacuation.bot.BotType;
-import com.bananaarch.minecraftevacuation.interactions.utils.CustomItems;
+import com.bananaarch.minecraftevacuation.interactions.enums.CustomItems;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
