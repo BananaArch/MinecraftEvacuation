@@ -28,7 +28,7 @@ public class AStar {
      */
 
     private final int maxNodeTests = 15000;
-    private final int maxFallDistance = 4;
+    private final int maxFallDistance = 2;
 
     public AStar(Location startLocation, Location endLocation) {
         this.startLocation = startLocation;

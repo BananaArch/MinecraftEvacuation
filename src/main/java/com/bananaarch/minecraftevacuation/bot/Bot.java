@@ -26,6 +26,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
@@ -154,49 +155,78 @@ public abstract class Bot extends ServerPlayer {
         }
 
         Queue<Location> checkpoints = BotUtil.cloneLinkedList(path);
+        final double TOLERANCE = 0.5;
 
-        AtomicReference<Location> nextLocation = new AtomicReference<>(checkpoints.peek());
-        AtomicBoolean atDestination = new AtomicBoolean(false);
+        taskManager.scheduleRepeatingTask(new BukkitRunnable() {
 
-        int taskId = taskManager.scheduleAsyncRepeatingTask(() -> {
+            @Override
+            public void run() {
 
-            if (getFlooredLocation() != floorLocation(nextLocation.get())) {
-                Vector direction = nextLocation.get().toVector().subtract(getLocation().toVector());
-                direction.normalize();
-                this.walk(direction);
-            } else {
-                if (checkpoints.size() == 0)
-                    atDestination = true;
-                else
-                    nextLocation = checkpoints.peek();
-                ChatUtil.broadcastMessage("Next location");
+                System.out.println(checkpoints.peek());
+
+                if (!checkpoints.isEmpty()) {
+                    Location nextLocation = checkpoints.peek();
+                    Location currentLocation = getLocation();
+
+                    double distanceSquared = currentLocation.distanceSquared(nextLocation);
+
+                    System.out.println(distanceSquared);
+
+                    if (distanceSquared <= TOLERANCE) {
+                        checkpoints.poll();
+                        if (!checkpoints.isEmpty()) {
+                            nextLocation = checkpoints.peek();
+                        } else {
+                            this.cancel();
+                            return;
+                        }
+                    }
+
+                    System.out.println("Next Location: " + nextLocation);
+                    System.out.println("Current Location: " + currentLocation);
+
+                    Vector direction = new Vector(
+                            nextLocation.getX() - currentLocation.getX(),
+                            nextLocation.getY() - currentLocation.getY(),
+                            nextLocation.getZ() - currentLocation.getZ()
+                    ).normalize();
+
+                    System.out.println(direction);
+
+//                    look(direction);
+                    moveBot((1/20) * direction.getX(), 1.5 * direction.getY(), (1/20) * direction.getZ());
+
+                } else {
+                    this.cancel();
+                }
+
             }
-
         }, 0, 1);
+    }
 
+    public void moveBot(double x, double y, double z) {
+
+        this.move(MoverType.SELF, new Vec3(x, y, z));
     }
 
     public void showPath() {
         AStar aStar = new AStar(initialLocation, targetLocation);
-        Location[] path = aStar.getPath().toArray(new Location[0]);
-        if (path == null) return;
-        BlockData[] blockDataPath = new BlockData[path.length];
+        LinkedList<Location> pathList = aStar.getPath();
+        if (pathList == null) return;
 
-        for (int i = 0; i < path.length; i++) {
+        Map<Location, BlockData> blockDataMap = new HashMap<>();
 
-            Block block = path[i].getBlock();
-            blockDataPath[i] = path[i].getBlock().getBlockData();
-
+        for (Location loc : pathList) {
+            Block block = loc.getBlock();
+            blockDataMap.put(loc, block.getBlockData());
             block.setType(Material.GLASS);
-
         }
 
         taskManager.scheduleTask(() -> {
-            for (int i = 0; i < path.length; i++) {
-                path[i].getBlock().setBlockData(blockDataPath[i]);
+            for (Location loc : pathList) {
+                loc.getBlock().setBlockData(blockDataMap.get(loc));
             }
         }, 20*15);
-
     }
 
     public boolean checkGround() {
@@ -306,7 +336,6 @@ public abstract class Bot extends ServerPlayer {
 
     public void walk(Vector velocity) {
         double max = 0.4;
-        addVelocity(velocity);
         if (velocity.length() > max)
             velocity.normalize().multiply(max);
     }
