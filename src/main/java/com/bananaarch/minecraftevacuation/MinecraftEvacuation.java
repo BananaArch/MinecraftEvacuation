@@ -39,9 +39,9 @@ public final class MinecraftEvacuation extends JavaPlugin {
         https://community.konduit.ai/t/deeplearning4j-for-minecraft-plugins-doesnt-work-due-to-different-entry-point/1719/14
         THANK YOU TO THIS MAN!!! I LOVE YOU!
          */
-        DL4JClassLoading.setDl4jClassloader(this.getClassLoader());
-        ND4JClassLoading.setNd4jClassloader(this.getClassLoader());
-        System.out.println("Backend for MinecraftEvacuation: " + Nd4j.getBackend().getClass().getName());
+//        DL4JClassLoading.setDl4jClassloader(this.getClassLoader());
+//        ND4JClassLoading.setNd4jClassloader(this.getClassLoader());
+//        System.out.println("Backend for MinecraftEvacuation: " + Nd4j.getBackend().getClass().getName());
 
         instance = this;
         taskManager = new TaskManager();

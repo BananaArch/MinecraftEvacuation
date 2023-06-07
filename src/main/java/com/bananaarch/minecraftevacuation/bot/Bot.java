@@ -146,6 +146,9 @@ public abstract class Bot extends ServerPlayer {
         this.path = aStar.getPath();
     }
 
+    /*
+    TODO: make following algo better
+     */
     public void followPath() {
 
         ChatUtil.broadcastMessage("Following path");
@@ -155,7 +158,7 @@ public abstract class Bot extends ServerPlayer {
         }
 
         Queue<Location> checkpoints = BotUtil.cloneLinkedList(path);
-        final double TOLERANCE = 0.5;
+        final double TOLERANCE = 1;
 
         taskManager.scheduleRepeatingTask(new BukkitRunnable() {
 
@@ -176,6 +179,7 @@ public abstract class Bot extends ServerPlayer {
                         checkpoints.poll();
                         if (!checkpoints.isEmpty()) {
                             nextLocation = checkpoints.peek();
+//                            generatePath();
                         } else {
                             this.cancel();
                             return;
@@ -193,8 +197,8 @@ public abstract class Bot extends ServerPlayer {
 
                     System.out.println(direction);
 
-//                    look(direction);
-                    moveBot((1/20) * direction.getX(), 1.5 * direction.getY(), (1/20) * direction.getZ());
+                    look(direction);
+                    moveBot(direction.getX(), 1.5 * direction.getY(), direction.getZ());
 
                 } else {
                     this.cancel();
